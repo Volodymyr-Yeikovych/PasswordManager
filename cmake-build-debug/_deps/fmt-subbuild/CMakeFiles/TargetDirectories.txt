@@ -1,0 +1,3 @@
+C:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/cmake-build-debug/_deps/fmt-subbuild/CMakeFiles/fmt-populate.dir
+C:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/cmake-build-debug/_deps/fmt-subbuild/CMakeFiles/edit_cache.dir
+C:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/cmake-build-debug/_deps/fmt-subbuild/CMakeFiles/rebuild_cache.dir

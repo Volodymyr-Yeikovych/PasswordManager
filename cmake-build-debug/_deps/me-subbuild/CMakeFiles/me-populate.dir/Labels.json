@@ -1,0 +1,46 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "C:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/cmake-build-debug/_deps/me-subbuild/CMakeFiles/me-populate"
+		},
+		{
+			"file" : "C:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/cmake-build-debug/_deps/me-subbuild/CMakeFiles/me-populate.rule"
+		},
+		{
+			"file" : "C:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/cmake-build-debug/_deps/me-subbuild/CMakeFiles/me-populate-complete.rule"
+		},
+		{
+			"file" : "C:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/cmake-build-debug/_deps/me-subbuild/me-populate-prefix/src/me-populate-stamp/me-populate-build.rule"
+		},
+		{
+			"file" : "C:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/cmake-build-debug/_deps/me-subbuild/me-populate-prefix/src/me-populate-stamp/me-populate-configure.rule"
+		},
+		{
+			"file" : "C:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/cmake-build-debug/_deps/me-subbuild/me-populate-prefix/src/me-populate-stamp/me-populate-download.rule"
+		},
+		{
+			"file" : "C:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/cmake-build-debug/_deps/me-subbuild/me-populate-prefix/src/me-populate-stamp/me-populate-install.rule"
+		},
+		{
+			"file" : "C:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/cmake-build-debug/_deps/me-subbuild/me-populate-prefix/src/me-populate-stamp/me-populate-mkdir.rule"
+		},
+		{
+			"file" : "C:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/cmake-build-debug/_deps/me-subbuild/me-populate-prefix/src/me-populate-stamp/me-populate-patch.rule"
+		},
+		{
+			"file" : "C:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/cmake-build-debug/_deps/me-subbuild/me-populate-prefix/src/me-populate-stamp/me-populate-test.rule"
+		},
+		{
+			"file" : "C:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/cmake-build-debug/_deps/me-subbuild/me-populate-prefix/src/me-populate-stamp/me-populate-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"me-populate"
+		],
+		"name" : "me-populate"
+	}
+}

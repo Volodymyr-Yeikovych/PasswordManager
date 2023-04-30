@@ -1,0 +1,9 @@
+# ninja log v5
+3	1746	7045914106766665	CMakeFiles/PJC_PROJECT_PasswordManager.dir/main.cpp.obj	6b413d3dd6be345b
+832	1373	7045580606229646	PJC_PROJECT_PasswordManager.exe	87d57884aba55c2e
+5	1872	7045914108017740	CMakeFiles/PJC_PROJECT_PasswordManager.dir/Managers/ProgramManager.cpp.obj	850705a32f523e67
+4	2089	7045897735955699	CMakeFiles/PJC_PROJECT_PasswordManager.dir/Managers/FileManager.cpp.obj	f3ea7d31c246a68f
+6	5957	7045568656132181	_deps/fmt-build/CMakeFiles/fmt.dir/src/format.cc.obj	56d76900b09f00f5
+6	2129	7045914110599956	CMakeFiles/PJC_PROJECT_PasswordManager.dir/Managers/ConsoleManager.cpp.obj	e6be50ccc1c2e62e
+5	7034	7045568666889139	_deps/fmt-build/CMakeFiles/fmt.dir/src/os.cc.obj	218365dbd4487357
+7035	7906	7045568675664397	_deps/fmt-build/libfmtd.a	1cb6c34814a7dc83
