@@ -16,6 +16,7 @@ class ProgramManager {
         explicit ProgramManager(const FileManager &fileManager, const ConsoleManager &consoleManager);
         auto start() -> void;
         auto operator=(ProgramManager const &programManager) -> ProgramManager;
+        auto inputOutOfBounds(const int &input, const unsigned long long int &poolSize) -> bool;
 };
 
 

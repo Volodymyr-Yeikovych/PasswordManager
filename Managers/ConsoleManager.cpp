@@ -9,14 +9,12 @@
 #include <filesystem>
 #include <iostream>
 
-template<typename T>
-auto ConsoleManager::print(T const &input) -> void {
+auto ConsoleManager::print(std::string const &input) -> void {
     auto formatted = fmt::format("{}", input);
     fmt::print("{}", formatted);
 }
 
-template<typename T>
-auto ConsoleManager::println(T const &input) -> void {
+auto ConsoleManager::println(std::string const &input) -> void {
     print(input);
     fmt::print("\n");
 }
@@ -39,4 +37,11 @@ auto ConsoleManager::readNum() -> int {
     auto num = int();
     std::cin >> num;
     return num;
+}
+
+auto ConsoleManager::readPath() -> std::filesystem::path{
+    auto sPath = std::string();
+    std::getline(std::cin, sPath);
+    auto path = std::filesystem::path(sPath);
+    return path;
 }

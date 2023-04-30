@@ -13,13 +13,12 @@
 class ConsoleManager {
 
 public:
-    template<typename T>
-    auto print(T const &input) -> void;
-    template<typename T>
-    auto println(T const &input) -> void;
+    auto print(std::string const &input) -> void;
+    auto println(std::string const &input) -> void;
     auto println() -> void;
     auto displayFiles(const std::vector<std::filesystem::path> &files) -> void;
     auto readNum() -> int;
+    auto readPath() -> std::filesystem::path;
 };
 
 
