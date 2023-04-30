@@ -8,7 +8,6 @@
 #include <vector>
 #include <filesystem>
 #include <iostream>
-// hmm
 
 template<typename T>
 auto ConsoleManager::print(T const &input) -> void {
