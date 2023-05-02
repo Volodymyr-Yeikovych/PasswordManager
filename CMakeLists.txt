@@ -11,5 +11,5 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(fmt)
 
-add_executable(PJC_PROJECT_PasswordManager main.cpp Managers/FileManager.cpp Managers/FileManager.h Managers/ProgramManager.cpp Managers/ProgramManager.h Managers/ConsoleManager.cpp Managers/ConsoleManager.h)
+add_executable(PJC_PROJECT_PasswordManager main.cpp Managers/FileManager.cpp Managers/FileManager.h Managers/ProgramManager.cpp Managers/ProgramManager.h Managers/ConsoleManager.cpp Managers/ConsoleManager.h Managers/CryptographyManager.cpp Managers/CryptographyManager.h cmake-build-debug/model/Password.cpp cmake-build-debug/model/Password.h cmake-build-debug/model/Category.cpp cmake-build-debug/model/Category.h)
 target_link_libraries(PJC_PROJECT_PasswordManager fmt)

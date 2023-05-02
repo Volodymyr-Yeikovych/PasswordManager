@@ -18,7 +18,7 @@ public:
     auto println() -> void;
     auto displayFiles(const std::vector<std::filesystem::path> &files) -> void;
     auto readNum() -> int;
-    auto readPath() -> std::filesystem::path;
+    auto readString() -> std::string ;
 };
 
 

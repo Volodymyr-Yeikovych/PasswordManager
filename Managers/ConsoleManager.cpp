@@ -39,9 +39,8 @@ auto ConsoleManager::readNum() -> int {
     return num;
 }
 
-auto ConsoleManager::readPath() -> std::filesystem::path{
-    auto sPath = std::string();
-    std::getline(std::cin, sPath);
-    auto path = std::filesystem::path(sPath);
-    return path;
+auto ConsoleManager::readString() -> std::string {
+    auto output = std::string();
+    std::getline(std::cin >> std::ws, output);
+    return output;
 }

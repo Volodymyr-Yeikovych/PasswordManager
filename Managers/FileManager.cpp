@@ -3,10 +3,18 @@
 //
 
 #include <filesystem>
+#include <fstream>
 #include "FileManager.h"
 
+FileManager::FileManager(const std::string &dir) {
+    this->defaultDir = dir;
+}
+
+FileManager::FileManager() {
+    this->defaultDir = R"(C:\Users\Volodymyr\CLionProjects\PJC_PROJECT_PasswordManager\cmake-build-debug\targetFiles)";
+}
 auto FileManager::countFilesInDefDir() -> int {
-    return countFilesDir(DEFAULT_DIR);
+    return countFilesDir(defaultDir);
 }
 
 auto FileManager::countFilesDir(std::string const& dir) -> int {
@@ -34,5 +42,16 @@ auto FileManager::getFilesVector(const std::string &dir) -> std::vector<std::fil
 }
 
 auto FileManager::getFilesVector() -> std::vector<std::filesystem::path> {
-    return getFilesVector(DEFAULT_DIR);
+    return getFilesVector(defaultDir);
+}
+
+auto FileManager::getFileContents(const std::filesystem::path &filePath) -> std::vector<std::string>{
+    auto out = std::fstream(filePath, std::fstream::out);
+    auto line = std::string();
+    auto lines = std::vector<std::string>();
+    while (std::getline(out, line)) {
+        if (!line.empty()) lines.emplace_back(line);
+    }
+    out.close();
+    return lines;
 }

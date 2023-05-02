@@ -11,14 +11,17 @@
 
 
 class FileManager {
-    std::string const DEFAULT_DIR = std::string(R"(C:\Users\Volodymyr\CLionProjects\PJC_PROJECT_PasswordManager\cmake-build-debug\EncFiles)");
+    std::string defaultDir;
 
     public:
+        FileManager(const std::string& dir);
+        FileManager();
         auto operator= (FileManager const& fileManager) -> FileManager;
         auto countFilesInDefDir() -> int;
         auto countFilesDir(const std::string &dir) -> int;
         auto getFilesVector() -> std::vector<std::filesystem::path>;
         auto getFilesVector(const std::string &dir) -> std::vector<std::filesystem::path>;
+        auto getFileContents(const std::filesystem::path &filePath) -> std::vector<std::string>;
 };
 
 
