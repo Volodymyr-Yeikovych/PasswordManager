@@ -6,8 +6,8 @@
 #include <cstring>
 #include <regex>
 #include "ProgramManager.h"
-#include <fmt/core.h>
-#include <fmt/ranges.h>
+#include "fmt/core.h"
+#include "fmt/ranges.h"
 
 auto ProgramManager::operator=(const ProgramManager &other) -> ProgramManager {
     this->fileManager = other.fileManager;
