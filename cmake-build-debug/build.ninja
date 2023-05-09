@@ -56,47 +56,47 @@ build CMakeFiles/PJC_PROJECT_PasswordManager.dir/main.cpp.obj: CXX_COMPILER__PJC
   OBJECT_DIR = CMakeFiles\PJC_PROJECT_PasswordManager.dir
   OBJECT_FILE_DIR = CMakeFiles\PJC_PROJECT_PasswordManager.dir
 
-build CMakeFiles/PJC_PROJECT_PasswordManager.dir/Managers/FileManager.cpp.obj: CXX_COMPILER__PJC_PROJECT_PasswordManager_Debug C$:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/Managers/FileManager.cpp || cmake_object_order_depends_target_PJC_PROJECT_PasswordManager
-  DEP_FILE = CMakeFiles\PJC_PROJECT_PasswordManager.dir\Managers\FileManager.cpp.obj.d
+build CMakeFiles/PJC_PROJECT_PasswordManager.dir/src/managers/FileManager.cpp.obj: CXX_COMPILER__PJC_PROJECT_PasswordManager_Debug C$:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/src/managers/FileManager.cpp || cmake_object_order_depends_target_PJC_PROJECT_PasswordManager
+  DEP_FILE = CMakeFiles\PJC_PROJECT_PasswordManager.dir\src\managers\FileManager.cpp.obj.d
   FLAGS = -g -fdiagnostics-color=always -std=gnu++20
   INCLUDES = -IC:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/cmake-build-debug/_deps/fmt-src/include
   OBJECT_DIR = CMakeFiles\PJC_PROJECT_PasswordManager.dir
-  OBJECT_FILE_DIR = CMakeFiles\PJC_PROJECT_PasswordManager.dir\Managers
+  OBJECT_FILE_DIR = CMakeFiles\PJC_PROJECT_PasswordManager.dir\src\managers
 
-build CMakeFiles/PJC_PROJECT_PasswordManager.dir/Managers/ProgramManager.cpp.obj: CXX_COMPILER__PJC_PROJECT_PasswordManager_Debug C$:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/Managers/ProgramManager.cpp || cmake_object_order_depends_target_PJC_PROJECT_PasswordManager
-  DEP_FILE = CMakeFiles\PJC_PROJECT_PasswordManager.dir\Managers\ProgramManager.cpp.obj.d
+build CMakeFiles/PJC_PROJECT_PasswordManager.dir/src/managers/ProgramManager.cpp.obj: CXX_COMPILER__PJC_PROJECT_PasswordManager_Debug C$:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/src/managers/ProgramManager.cpp || cmake_object_order_depends_target_PJC_PROJECT_PasswordManager
+  DEP_FILE = CMakeFiles\PJC_PROJECT_PasswordManager.dir\src\managers\ProgramManager.cpp.obj.d
   FLAGS = -g -fdiagnostics-color=always -std=gnu++20
   INCLUDES = -IC:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/cmake-build-debug/_deps/fmt-src/include
   OBJECT_DIR = CMakeFiles\PJC_PROJECT_PasswordManager.dir
-  OBJECT_FILE_DIR = CMakeFiles\PJC_PROJECT_PasswordManager.dir\Managers
+  OBJECT_FILE_DIR = CMakeFiles\PJC_PROJECT_PasswordManager.dir\src\managers
 
-build CMakeFiles/PJC_PROJECT_PasswordManager.dir/Managers/ConsoleManager.cpp.obj: CXX_COMPILER__PJC_PROJECT_PasswordManager_Debug C$:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/Managers/ConsoleManager.cpp || cmake_object_order_depends_target_PJC_PROJECT_PasswordManager
-  DEP_FILE = CMakeFiles\PJC_PROJECT_PasswordManager.dir\Managers\ConsoleManager.cpp.obj.d
+build CMakeFiles/PJC_PROJECT_PasswordManager.dir/src/managers/ConsoleManager.cpp.obj: CXX_COMPILER__PJC_PROJECT_PasswordManager_Debug C$:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/src/managers/ConsoleManager.cpp || cmake_object_order_depends_target_PJC_PROJECT_PasswordManager
+  DEP_FILE = CMakeFiles\PJC_PROJECT_PasswordManager.dir\src\managers\ConsoleManager.cpp.obj.d
   FLAGS = -g -fdiagnostics-color=always -std=gnu++20
   INCLUDES = -IC:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/cmake-build-debug/_deps/fmt-src/include
   OBJECT_DIR = CMakeFiles\PJC_PROJECT_PasswordManager.dir
-  OBJECT_FILE_DIR = CMakeFiles\PJC_PROJECT_PasswordManager.dir\Managers
+  OBJECT_FILE_DIR = CMakeFiles\PJC_PROJECT_PasswordManager.dir\src\managers
 
-build CMakeFiles/PJC_PROJECT_PasswordManager.dir/Managers/CryptographyManager.cpp.obj: CXX_COMPILER__PJC_PROJECT_PasswordManager_Debug C$:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/Managers/CryptographyManager.cpp || cmake_object_order_depends_target_PJC_PROJECT_PasswordManager
-  DEP_FILE = CMakeFiles\PJC_PROJECT_PasswordManager.dir\Managers\CryptographyManager.cpp.obj.d
+build CMakeFiles/PJC_PROJECT_PasswordManager.dir/src/managers/CryptographyManager.cpp.obj: CXX_COMPILER__PJC_PROJECT_PasswordManager_Debug C$:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/src/managers/CryptographyManager.cpp || cmake_object_order_depends_target_PJC_PROJECT_PasswordManager
+  DEP_FILE = CMakeFiles\PJC_PROJECT_PasswordManager.dir\src\managers\CryptographyManager.cpp.obj.d
   FLAGS = -g -fdiagnostics-color=always -std=gnu++20
   INCLUDES = -IC:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/cmake-build-debug/_deps/fmt-src/include
   OBJECT_DIR = CMakeFiles\PJC_PROJECT_PasswordManager.dir
-  OBJECT_FILE_DIR = CMakeFiles\PJC_PROJECT_PasswordManager.dir\Managers
+  OBJECT_FILE_DIR = CMakeFiles\PJC_PROJECT_PasswordManager.dir\src\managers
 
-build CMakeFiles/PJC_PROJECT_PasswordManager.dir/model/Password.cpp.obj: CXX_COMPILER__PJC_PROJECT_PasswordManager_Debug C$:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/cmake-build-debug/model/Password.cpp || cmake_object_order_depends_target_PJC_PROJECT_PasswordManager
-  DEP_FILE = CMakeFiles\PJC_PROJECT_PasswordManager.dir\model\Password.cpp.obj.d
+build CMakeFiles/PJC_PROJECT_PasswordManager.dir/src/model/Password.cpp.obj: CXX_COMPILER__PJC_PROJECT_PasswordManager_Debug C$:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/src/model/Password.cpp || cmake_object_order_depends_target_PJC_PROJECT_PasswordManager
+  DEP_FILE = CMakeFiles\PJC_PROJECT_PasswordManager.dir\src\model\Password.cpp.obj.d
   FLAGS = -g -fdiagnostics-color=always -std=gnu++20
   INCLUDES = -IC:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/cmake-build-debug/_deps/fmt-src/include
   OBJECT_DIR = CMakeFiles\PJC_PROJECT_PasswordManager.dir
-  OBJECT_FILE_DIR = CMakeFiles\PJC_PROJECT_PasswordManager.dir\model
+  OBJECT_FILE_DIR = CMakeFiles\PJC_PROJECT_PasswordManager.dir\src\model
 
-build CMakeFiles/PJC_PROJECT_PasswordManager.dir/model/Category.cpp.obj: CXX_COMPILER__PJC_PROJECT_PasswordManager_Debug C$:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/cmake-build-debug/model/Category.cpp || cmake_object_order_depends_target_PJC_PROJECT_PasswordManager
-  DEP_FILE = CMakeFiles\PJC_PROJECT_PasswordManager.dir\model\Category.cpp.obj.d
+build CMakeFiles/PJC_PROJECT_PasswordManager.dir/src/model/Category.cpp.obj: CXX_COMPILER__PJC_PROJECT_PasswordManager_Debug C$:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/src/model/Category.cpp || cmake_object_order_depends_target_PJC_PROJECT_PasswordManager
+  DEP_FILE = CMakeFiles\PJC_PROJECT_PasswordManager.dir\src\model\Category.cpp.obj.d
   FLAGS = -g -fdiagnostics-color=always -std=gnu++20
   INCLUDES = -IC:/Users/Volodymyr/CLionProjects/PJC_PROJECT_PasswordManager/cmake-build-debug/_deps/fmt-src/include
   OBJECT_DIR = CMakeFiles\PJC_PROJECT_PasswordManager.dir
-  OBJECT_FILE_DIR = CMakeFiles\PJC_PROJECT_PasswordManager.dir\model
+  OBJECT_FILE_DIR = CMakeFiles\PJC_PROJECT_PasswordManager.dir\src\model
 
 
 # =============================================================================
@@ -106,7 +106,7 @@ build CMakeFiles/PJC_PROJECT_PasswordManager.dir/model/Category.cpp.obj: CXX_COM
 #############################################
 # Link the executable PJC_PROJECT_PasswordManager.exe
 
-build PJC_PROJECT_PasswordManager.exe: CXX_EXECUTABLE_LINKER__PJC_PROJECT_PasswordManager_Debug CMakeFiles/PJC_PROJECT_PasswordManager.dir/main.cpp.obj CMakeFiles/PJC_PROJECT_PasswordManager.dir/Managers/FileManager.cpp.obj CMakeFiles/PJC_PROJECT_PasswordManager.dir/Managers/ProgramManager.cpp.obj CMakeFiles/PJC_PROJECT_PasswordManager.dir/Managers/ConsoleManager.cpp.obj CMakeFiles/PJC_PROJECT_PasswordManager.dir/Managers/CryptographyManager.cpp.obj CMakeFiles/PJC_PROJECT_PasswordManager.dir/model/Password.cpp.obj CMakeFiles/PJC_PROJECT_PasswordManager.dir/model/Category.cpp.obj | _deps/fmt-build/libfmtd.a || _deps/fmt-build/libfmtd.a
+build PJC_PROJECT_PasswordManager.exe: CXX_EXECUTABLE_LINKER__PJC_PROJECT_PasswordManager_Debug CMakeFiles/PJC_PROJECT_PasswordManager.dir/main.cpp.obj CMakeFiles/PJC_PROJECT_PasswordManager.dir/src/managers/FileManager.cpp.obj CMakeFiles/PJC_PROJECT_PasswordManager.dir/src/managers/ProgramManager.cpp.obj CMakeFiles/PJC_PROJECT_PasswordManager.dir/src/managers/ConsoleManager.cpp.obj CMakeFiles/PJC_PROJECT_PasswordManager.dir/src/managers/CryptographyManager.cpp.obj CMakeFiles/PJC_PROJECT_PasswordManager.dir/src/model/Password.cpp.obj CMakeFiles/PJC_PROJECT_PasswordManager.dir/src/model/Category.cpp.obj | _deps/fmt-build/libfmtd.a || _deps/fmt-build/libfmtd.a
   FLAGS = -g
   LINK_LIBRARIES = _deps/fmt-build/libfmtd.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\PJC_PROJECT_PasswordManager.dir
