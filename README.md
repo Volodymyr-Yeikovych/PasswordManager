@@ -1,2 +1,2 @@
 # PasswordManager
-A C++ project for PJATK for PJC subject
+A C++ project for PJATK, PJC subject
