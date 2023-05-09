@@ -46,7 +46,7 @@ auto FileManager::getFilesVector() -> std::vector<std::filesystem::path> {
 }
 
 auto FileManager::getFileContents(const std::filesystem::path &filePath) -> std::vector<std::string>{
-    auto out = std::fstream(filePath, std::fstream::out);
+    auto out = std::fstream(filePath, std::fstream::out | std::fstream::app);
     auto line = std::string();
     auto lines = std::vector<std::string>();
     while (std::getline(out, line)) {

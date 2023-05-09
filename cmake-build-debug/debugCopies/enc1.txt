@@ -1,3 +1,9 @@
-Google play:hecWTFisThatP7WD&&89:Utility;
-Amazon,.com : niceLoveBezs91as%4 : Shopping:amazon.com:com.com: ;
-Vertabelo.help: aslji139IOLK : Studying :vertabelo.com:pjwstk;
+Utility {
+    Google play:hecWTFisThatP7WD&&89;
+}
+Shopping {
+    Amazon,.com:niceBezs91as%4:amazon.com:log_amz;
+}
+Studying {
+    Vertabelo.com:aslji139IOLK::sNum;
+}
