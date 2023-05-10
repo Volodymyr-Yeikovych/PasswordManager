@@ -213,6 +213,36 @@ auto ProgramManager::isInvalidSEDCommandTypes(const std::vector<std::string> &pa
     return false;
 }
 
+auto ProgramManager::isInvalidSortParam(const std::string &param) -> bool {
+    for (const auto &el: SORT_PARAMS_TYPES) {
+        if (param == el) {
+            return false;
+        }
+    }
+    return true;
+}
+
+auto ProgramManager::isInvalidSortOrder(const std::string &param) -> bool {
+    for (const auto &el: SORT_PARAMS_ORDER_TYPES) {
+        if (param == el) {
+            return false;
+        }
+    }
+    return true;
+}
+
+auto ProgramManager::isInvalidSortCommandTypes(const std::vector<std::string> &params) -> bool {
+    // TODO std::ranges::all_of() instead of for
+    for (const auto &param: params) {
+        if (isInvalidSortParam(param)) {
+            if (isInvalidSortOrder(param)) return false;
+        }
+    }
+//    TODO filter distinct param types, if they are not print error in console
+//    if ()
+    return true;
+}
+
 auto ProgramManager::isInvalidAddCommandTypes(const std::vector<std::string> &params) -> bool {
     if (params[1] != "c" && params[1] != "g") return true;
     auto valuesVec = strSplitTrim(params[2], ":");
@@ -231,6 +261,12 @@ auto ProgramManager::getStringVecFromAddDelCatCommands(const std::string &comman
     auto paramsVec = strSplitTrim(command, "\\s");
     fmt::print("{} \n", paramsVec); /// debug line <------------------------
     return paramsVec;
+}
+
+auto ProgramManager::getStringVecFromSortCommands(const std::string &command) -> std::vector<std::string> {
+    auto dashVec = strSplitTrim(command, "-");
+    fmt::print("{} \n", dashVec); /// debug line <------------------------
+    return dashVec;
 }
 
 auto ProgramManager::isInvalidAddDelCatCommandLength(const std::vector<std::string> &params) -> bool {
@@ -257,7 +293,11 @@ auto ProgramManager::isSearchCommand(const std::string &command) -> bool {
      **
      **/
 auto ProgramManager::isSortCommand(const std::string &command) -> bool {
-    return false;
+    auto paramsVec = getStringVecFromSortCommands(command);
+    if (isEmptyCommand(paramsVec)) return false;
+    if (isInvalidCommandKeyword(paramsVec, "sort")) return false;
+    if (isInvalidSortCommandTypes(paramsVec)) return false;
+    return true;
 }
 
 /** ADD

@@ -11,7 +11,7 @@ FileManager::FileManager(const std::string &dir) {
 }
 
 FileManager::FileManager() {
-    this->defaultDir = R"(C:\Users\Volodymyr\CLionProjects\PJC_PROJECT_PasswordManager\resources\targetFiles)";
+    this->defaultDir = R"(C:\Users\Volodymyr Yeikovych\CLionProjects\PJC_PROJECT_PasswordManager\resources\targetFiles)";
 }
 auto FileManager::countFilesInDefDir() -> int {
     return countFilesDir(defaultDir);

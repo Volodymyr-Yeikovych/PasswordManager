@@ -15,6 +15,8 @@ class ProgramManager {
     ConsoleManager consoleManager;
     CryptographyManager cryptographyManager;
     const std::vector<std::string> SEARCH_EDIT_DELETE_PARAMS_TYPES = {"a", "n", "pw", "c", "w", "l"};
+    const std::vector<std::string> SORT_PARAMS_TYPES = {"n", "pw", "c", "w", "l"};
+    const std::vector<std::string> SORT_PARAMS_ORDER_TYPES = {"len", "abc", "desc", "asc"};
 public:
     explicit ProgramManager(const FileManager &fileManager, const ConsoleManager &consoleManager,
                             const CryptographyManager &cryptographyManager);
@@ -89,6 +91,10 @@ public:
     auto strSplitTrim(const std::string &str, const std::string &delim) -> std::vector<std::string>;
     auto getStringVecFromAddDelCatCommands(const std::string &command) -> std::vector<std::string>;
     auto isInvalidAddDelCatCommandLength(const std::vector<std::string> &params) -> bool;
+    auto getStringVecFromSortCommands(const std::string &command) -> std::vector<std::string>;
+    auto isInvalidSortCommandTypes(const std::vector<std::string> &params) -> bool;
+    auto isInvalidSortParam(const std::string &param) -> bool;
+    auto isInvalidSortOrder(const std::string &param) -> bool;
 };
 
 
