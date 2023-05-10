@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cstring>
 #include <regex>
+#include <set>
 #include "ProgramManager.h"
 #include "fmt/core.h"
 #include "fmt/ranges.h"
@@ -122,13 +123,13 @@ auto ProgramManager::getStringVecFromSADCommands(const std::string &command) -> 
     for (int i = 1; i < dashVec.size(); i++) {
         trim(dashVec[i]);
         if (!dashVec[i].ends_with('"')) {
-            consoleManager.println("Error: missing closing quotes(\").");
+//            consoleManager.println("Error: missing closing quotes(\").");
             return {};
         }
         auto quoteVec = strSplit(dashVec[i], "\"");
         if (quoteVec.size() != 2) {
-            consoleManager.println("Error: Invalid number of quotes(\") expected {2}, found {"
-                                   + std::to_string(quoteVec.size()) + "}");
+//            consoleManager.println("Error: Invalid number of quotes(\") expected {2}, found {"
+//                                   + std::to_string(quoteVec.size()) + "}");
             return {};
         }
         trim(quoteVec[0]);
@@ -159,7 +160,7 @@ auto ProgramManager::trim(std::string &s) -> void {
 
 auto ProgramManager::isEmptyCommand(const std::vector<std::string> &params) -> bool {
     if (params.empty()) {
-        consoleManager.println("Error: Invalid syntax. Use 'help' for manual.");
+//        consoleManager.println("Error: Invalid syntax. Use 'help' for manual.");
         return true;
     }
     return false;
@@ -232,15 +233,27 @@ auto ProgramManager::isInvalidSortOrder(const std::string &param) -> bool {
 }
 
 auto ProgramManager::isInvalidSortCommandTypes(const std::vector<std::string> &params) -> bool {
-    // TODO std::ranges::all_of() instead of for
-    for (const auto &param: params) {
+    auto paramSet = std::set<std::string>();
+    auto timesInserted = 0;
+    for (int i = 0; const auto &param: params) {
+        if (i == 0) {
+            i++;
+            continue;
+        }
         if (isInvalidSortParam(param)) {
-            if (isInvalidSortOrder(param)) return false;
+            if (isInvalidSortOrder(param)) {
+                consoleManager.println("Error: invalid command syntax. Use 'help' for reference.");
+                return true;
+            }
+        } else {
+            if (paramSet.insert(param).second) timesInserted++;
+        }
+        if (paramSet.size() != timesInserted) {
+            consoleManager.println("Error: parameters should be distinct!");
+            return true;
         }
     }
-//    TODO filter distinct param types, if they are not print error in console
-//    if ()
-    return true;
+    return false;
 }
 
 auto ProgramManager::isInvalidAddCommandTypes(const std::vector<std::string> &params) -> bool {
@@ -265,8 +278,17 @@ auto ProgramManager::getStringVecFromAddDelCatCommands(const std::string &comman
 
 auto ProgramManager::getStringVecFromSortCommands(const std::string &command) -> std::vector<std::string> {
     auto dashVec = strSplitTrim(command, "-");
-    fmt::print("{} \n", dashVec); /// debug line <------------------------
-    return dashVec;
+    auto paramsVec = std::vector<std::string>();
+    for (int i = 0; const auto& params : dashVec) {
+        if (i == 0) paramsVec.emplace_back(params);
+        else {
+            auto spaceSplit = strSplitTrim(params, "\\s");
+            for (const auto &param: spaceSplit) paramsVec.emplace_back(param);
+        }
+        i++;
+    }
+    fmt::print("{}\n", paramsVec); /// debug line <------------------------
+    return paramsVec;
 }
 
 auto ProgramManager::isInvalidAddDelCatCommandLength(const std::vector<std::string> &params) -> bool {
