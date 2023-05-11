@@ -8,14 +8,14 @@
 
 auto PasswordMapper::mapStringToPsw(const std::string &line) -> Password {
     auto dDotVec = strSplitTrim(line, ":");
-    if (dDotVec.size() < 2 || dDotVec.size() > 4) return {};
+    if (dDotVec.size() < 3 || dDotVec.size() > 5) return {};
 
     auto name = dDotVec[0];
     auto password = dDotVec[1];
     auto website = std::string();
     auto login = std::string();
-    if (dDotVec.size() > 2) website = dDotVec[2];
-    if (dDotVec.size() > 3) login = dDotVec[3];
+    if (dDotVec.size() > 3) website = dDotVec[3];
+    if (dDotVec.size() > 4) login = dDotVec[4];
 
     auto mappedPassword = Password(name, password);
     mappedPassword.setWebsite(website);
