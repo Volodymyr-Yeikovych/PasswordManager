@@ -115,32 +115,6 @@ auto ProgramManager::exit(int errCode) -> void {
     std::exit(errCode);
 }
 
-auto ProgramManager::getStringVecFromSADCommands(const std::string &command) -> std::vector<std::string> {
-    auto dashVec = strSplit(command, "-");
-    auto paramsVec = std::vector<std::string>();
-    trim(dashVec[0]);
-    paramsVec.emplace_back(dashVec[0]);
-    for (int i = 1; i < dashVec.size(); i++) {
-        trim(dashVec[i]);
-        if (!dashVec[i].ends_with('"')) {
-//            consoleManager.println("Error: missing closing quotes(\").");
-            return {};
-        }
-        auto quoteVec = strSplit(dashVec[i], "\"");
-        if (quoteVec.size() != 2) {
-//            consoleManager.println("Error: Invalid number of quotes(\") expected {2}, found {"
-//                                   + std::to_string(quoteVec.size()) + "}");
-            return {};
-        }
-        trim(quoteVec[0]);
-        paramsVec.emplace_back(quoteVec[0]);
-        paramsVec.emplace_back(quoteVec[1]);
-    }
-    fmt::print("{} \n", paramsVec); /// debug line <------------------------
-    return paramsVec;
-}
-
-
 auto ProgramManager::leftTrim(std::string &s) -> void {
     s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
         return !std::isspace(ch);
@@ -192,24 +166,29 @@ auto ProgramManager::isInvalidCommandKeyword(const std::vector<std::string> &par
     return false;
 }
 
+auto ProgramManager::isInvalidSEDParamType(const std::string &paramType) -> bool {
+    auto wrongParam = bool(true);
+    for (const auto &param: SEARCH_EDIT_DELETE_PARAMS_TYPES) {
+        if (paramType == param) {
+            wrongParam = false;
+            break;
+        }
+    }
+    if (wrongParam) {
+        consoleManager.println(
+                "Error: Illegal parameter type for commands (search/edit/add/delete) {" + paramType + "}");
+        return true;
+    }
+    if (paramType.empty()) {
+        consoleManager.println("Error: Empty parameters(\"  \").");
+        return true;
+    }
+    return false;
+}
+
 auto ProgramManager::isInvalidSEDCommandTypes(const std::vector<std::string> &params) -> bool {
     for (int i = 1; i < params.size(); i += 2) {
-        auto wrongParam = bool(true);
-        for (const auto &param: SEARCH_EDIT_DELETE_PARAMS_TYPES) {
-            if (params[i] == param) {
-                wrongParam = false;
-                break;
-            }
-        }
-        if (wrongParam) {
-            consoleManager.println(
-                    "Error: Illegal parameter type for commands (search/edit/add/delete) {" + params[i] + "}");
-            return true;
-        }
-        if (params[i + 1].empty()) {
-            consoleManager.println("Error: Empty parameters(\"  \").");
-            return true;
-        }
+        if(isInvalidSEDParamType(params[i])) return true;
     }
     return false;
 }
@@ -270,16 +249,41 @@ auto ProgramManager::isInvalidAddCommandTypes(const std::vector<std::string> &pa
     return false;
 }
 
+auto ProgramManager::getStringVecFromSADCommands(const std::string &command) -> std::vector<std::string> {
+    auto dashVec = strSplit(command, "-");
+    auto paramsVec = std::vector<std::string>();
+    trim(dashVec[0]);
+    paramsVec.emplace_back(dashVec[0]);
+    for (int i = 1; i < dashVec.size(); i++) {
+        trim(dashVec[i]);
+        if (!dashVec[i].ends_with('"')) {
+//            consoleManager.println("Error: missing closing quotes(\").");
+            return {};
+        }
+        auto quoteVec = strSplit(dashVec[i], "\"");
+        if (quoteVec.size() != 2) {
+//            consoleManager.println("Error: Invalid number of quotes(\") expected {2}, found {"
+//                                   + std::to_string(quoteVec.size()) + "}");
+            return {};
+        }
+        trim(quoteVec[0]);
+        paramsVec.emplace_back(quoteVec[0]);
+        paramsVec.emplace_back(quoteVec[1]);
+    }
+//    fmt::print("{} \n", paramsVec); /// debug line <------------------------
+    return paramsVec;
+}
+
 auto ProgramManager::getStringVecFromAddDelCatCommands(const std::string &command) -> std::vector<std::string> {
     auto paramsVec = strSplitTrim(command, "\\s");
     fmt::print("{} \n", paramsVec); /// debug line <------------------------
     return paramsVec;
 }
 
-auto ProgramManager::getStringVecFromSortCommands(const std::string &command) -> std::vector<std::string> {
+auto ProgramManager::getStringVecFromSortCommand(const std::string &command) -> std::vector<std::string> {
     auto dashVec = strSplitTrim(command, "-");
     auto paramsVec = std::vector<std::string>();
-    for (int i = 0; const auto& params : dashVec) {
+    for (int i = 0; const auto &params: dashVec) {
         if (i == 0) paramsVec.emplace_back(params);
         else {
             auto spaceSplit = strSplitTrim(params, "\\s");
@@ -287,7 +291,30 @@ auto ProgramManager::getStringVecFromSortCommands(const std::string &command) ->
         }
         i++;
     }
-    fmt::print("{}\n", paramsVec); /// debug line <------------------------
+    fmt::print("{} \n", paramsVec); /// debug line <------------------------
+    return paramsVec;
+}
+
+auto ProgramManager::getStringVecFromEditCommand(const std::string &command) -> std::vector<std::string> {
+    auto paramsVec = std::vector<std::string>();
+    auto pipeVec = strSplitTrim(command, "\\|");
+    if (pipeVec.size() != 2) {
+        return {};
+    }
+    auto firstHalf = getStringVecFromSADCommands(pipeVec[0]);
+    auto modInput = std::string("| ");
+    modInput.append(pipeVec[1]);
+    auto secondHalf = getStringVecFromSADCommands(modInput);
+    if (firstHalf.empty() || secondHalf.empty()) {
+        return {};
+    }
+    for (auto const &el: firstHalf) paramsVec.emplace_back(el);
+    for (int i = 0; auto const &el: secondHalf) {
+//        if (i != 0)
+        paramsVec.emplace_back(el);
+        i++;
+    }
+    fmt::print("{} \n", paramsVec); /// debug line <------------------------
     return paramsVec;
 }
 
@@ -295,6 +322,35 @@ auto ProgramManager::isInvalidAddDelCatCommandLength(const std::vector<std::stri
     if (params.size() != 1 && params.size() != 2) {
         consoleManager.println("Error: Invalid syntax, refer to 'help' for manual.");
         return true;
+    }
+    return false;
+}
+
+auto ProgramManager::isInvalidEditCommandTypes(const std::vector<std::string> &params) -> bool {
+    auto pipeCount = 0;
+    auto keyWordCount = 0;
+    for (int i = 0; auto const &el : params) {
+        if (el == "edit") {
+            if (keyWordCount == 0) {
+                keyWordCount++;
+                i++;
+                continue;
+            } else {
+                consoleManager.println("Error: more than one edit keyword in command.");
+                return true;
+            }
+        }
+        if (el == "|") {
+            if (pipeCount == 0) {
+                pipeCount++;
+                continue;
+            } else {
+                consoleManager.println("Error: more than one pipe char in command.");
+                return true;
+            }
+        }
+        if (i % 2 == 1 && isInvalidSEDParamType(el)) return true;
+        i++;
     }
     return false;
 }
@@ -315,7 +371,7 @@ auto ProgramManager::isSearchCommand(const std::string &command) -> bool {
      **
      **/
 auto ProgramManager::isSortCommand(const std::string &command) -> bool {
-    auto paramsVec = getStringVecFromSortCommands(command);
+    auto paramsVec = getStringVecFromSortCommand(command);
     if (isEmptyCommand(paramsVec)) return false;
     if (isInvalidCommandKeyword(paramsVec, "sort")) return false;
     if (isInvalidSortCommandTypes(paramsVec)) return false;
@@ -339,7 +395,11 @@ auto ProgramManager::isAddCommand(const std::string &command) -> bool {
      **
      **/
 auto ProgramManager::isEditPasswordCommand(const std::string &command) -> bool {
-    return false;
+    auto paramsVec = getStringVecFromEditCommand(command);
+    if (isEmptyCommand(paramsVec)) return false;
+    if (isInvalidCommandKeyword(paramsVec, "edit")) return false;
+    if (isInvalidEditCommandTypes(paramsVec)) return false;
+    return true;
 }
 
 /** DELETE
@@ -516,10 +576,6 @@ auto ProgramManager::listCommands() -> void {
     consoleManager.println("If cooking category doesn't exist the command will fail");
     consoleManager.println("You can combine as many params as you like:");
     consoleManager.println(R"(edit -n "Google" -w "Google.com" | -pw "GooglePsw")");
-    consoleManager.println("Example: edit | -pw \"allPassword\"");
-    consoleManager.println("This command will change all passwords to (allPassword)");
-    consoleManager.println("Example: edit | ");
-    consoleManager.println("This command will do nothing as it selects everything and does nothing =)");
     consoleManager.println("------------------------------------------------");
     consoleManager.println("delete -p \"%\"");
     consoleManager.println("instead of -p u need to choose the following parameters:");

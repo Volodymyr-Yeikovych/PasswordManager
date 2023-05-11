@@ -91,10 +91,13 @@ public:
     auto strSplitTrim(const std::string &str, const std::string &delim) -> std::vector<std::string>;
     auto getStringVecFromAddDelCatCommands(const std::string &command) -> std::vector<std::string>;
     auto isInvalidAddDelCatCommandLength(const std::vector<std::string> &params) -> bool;
-    auto getStringVecFromSortCommands(const std::string &command) -> std::vector<std::string>;
+    auto getStringVecFromSortCommand(const std::string &command) -> std::vector<std::string>;
     auto isInvalidSortCommandTypes(const std::vector<std::string> &params) -> bool;
     auto isInvalidSortParam(const std::string &param) -> bool;
     auto isInvalidSortOrder(const std::string &param) -> bool;
+    auto getStringVecFromEditCommand(const std::string &command) -> std::vector<std::string>;
+    auto isInvalidEditCommandTypes(const std::vector<std::string> &params) -> bool;
+    auto isInvalidSEDParamType(const std::string &paramType) -> bool;
 };
 
 
