@@ -9,21 +9,24 @@
 #include "ProgramManager.h"
 #include "fmt/core.h"
 #include "fmt/ranges.h"
+#include "../model/Category.h"
 
 auto ProgramManager::operator=(const ProgramManager &other) -> ProgramManager {
     this->fileManager = other.fileManager;
     this->consoleManager = other.consoleManager;
     this->cryptographyManager = other.cryptographyManager;
+    this->passwordMapper = other.passwordMapper;
     return *this;
 }
 
 ProgramManager::ProgramManager(const FileManager &fileManager, const ConsoleManager &consoleManager,
-                               const CryptographyManager &cryptographyManager)
+                               const CryptographyManager &cryptographyManager, const PasswordMapper &mapper)
         : fileManager(fileManager), consoleManager(consoleManager),
-          cryptographyManager(cryptographyManager) {
+          cryptographyManager(cryptographyManager), passwordMapper(mapper) {
     this->fileManager = fileManager;
     this->consoleManager = consoleManager;
     this->cryptographyManager = cryptographyManager;
+    this->passwordMapper = mapper;
 }
 
 auto ProgramManager::start() -> void {
@@ -98,38 +101,8 @@ auto ProgramManager::isNotCommand(const std::string &command) -> bool {
            && !isDeletePasswordCommand(command) && !isAddCategoryCommand(command) && !isDeleteCategoryCommand(command);
 }
 
-auto ProgramManager::strSplit(const std::string &string, const std::string &delim) -> std::vector<std::string> {
-    auto regex = std::regex(delim);
-    auto dashIter = std::sregex_token_iterator(string.begin(), string.end(), regex, -1);
-    auto dashIterEnd = std::sregex_token_iterator();
-    return std::vector<std::string>{dashIter, dashIterEnd};
-}
-
-auto ProgramManager::strSplitTrim(const std::string &str, const std::string &delim) -> std::vector<std::string> {
-    auto valueVec = strSplit(str, delim);
-    for (auto &el: valueVec) trim(el);
-    return valueVec;
-}
-
 auto ProgramManager::exit(int errCode) -> void {
     std::exit(errCode);
-}
-
-auto ProgramManager::leftTrim(std::string &s) -> void {
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
-        return !std::isspace(ch);
-    }));
-}
-
-auto ProgramManager::rightTrim(std::string &s) -> void {
-    s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
-        return !std::isspace(ch);
-    }).base(), s.end());
-}
-
-auto ProgramManager::trim(std::string &s) -> void {
-    rightTrim(s);
-    leftTrim(s);
 }
 
 auto ProgramManager::isEmptyCommand(const std::vector<std::string> &params) -> bool {
@@ -237,67 +210,57 @@ auto ProgramManager::isInvalidSortCommandTypes(const std::vector<std::string> &p
 
 auto ProgramManager::isInvalidAddCommandTypes(const std::vector<std::string> &params) -> bool {
     if (params[1] != "c" && params[1] != "g") return true;
-    auto valuesVec = strSplitTrim(params[2], ":");
+    auto valuesVec = passwordMapper.strSplitTrim(params[2], ":");
     if (valuesVec.size() < 3 || valuesVec.size() > 5) return true;
-//    auto name = valuesVec[0];
-//    auto password = valuesVec[1];
-//    auto category = valuesVec[2];
-//    auto website = std::string();
-//    auto login = std::string();
-//    if (valuesVec.size() > 3) website = params[3];
-//    if (valuesVec.size() > 4) login = params[4];
     return false;
 }
 
 auto ProgramManager::getStringVecFromSADCommands(const std::string &command) -> std::vector<std::string> {
-    auto dashVec = strSplit(command, "-");
+    auto dashVec = passwordMapper.strSplitTrim(command, "-");
     auto paramsVec = std::vector<std::string>();
-    trim(dashVec[0]);
     paramsVec.emplace_back(dashVec[0]);
     for (int i = 1; i < dashVec.size(); i++) {
-        trim(dashVec[i]);
         if (!dashVec[i].ends_with('"')) {
 //            consoleManager.println("Error: missing closing quotes(\").");
             return {};
         }
-        auto quoteVec = strSplit(dashVec[i], "\"");
+        auto quoteVec = passwordMapper.strSplitTrim(dashVec[i], "\"");
         if (quoteVec.size() != 2) {
 //            consoleManager.println("Error: Invalid number of quotes(\") expected {2}, found {"
 //                                   + std::to_string(quoteVec.size()) + "}");
             return {};
         }
-        trim(quoteVec[0]);
         paramsVec.emplace_back(quoteVec[0]);
         paramsVec.emplace_back(quoteVec[1]);
+    }
+    fmt::print("{} \n", paramsVec); /// debug line <------------------------
+    return paramsVec;
+}
+
+auto ProgramManager::getStringVecFromAddDelCatCommands(const std::string &command) -> std::vector<std::string> {
+    auto paramsVec = passwordMapper.strSplitTrim(command, "\\s");
+//    fmt::print("{} \n", paramsVec); /// debug line <------------------------
+    return paramsVec;
+}
+
+auto ProgramManager::getStringVecFromSortCommand(const std::string &command) -> std::vector<std::string> {
+    auto dashVec = passwordMapper.strSplitTrim(command, "-");
+    auto paramsVec = std::vector<std::string>();
+    for (int i = 0; const auto &params: dashVec) {
+        if (i == 0) paramsVec.emplace_back(params);
+        else {
+            auto spaceSplit = passwordMapper.strSplitTrim(params, "\\s");
+            for (const auto &param: spaceSplit) paramsVec.emplace_back(param);
+        }
+        i++;
     }
 //    fmt::print("{} \n", paramsVec); /// debug line <------------------------
     return paramsVec;
 }
 
-auto ProgramManager::getStringVecFromAddDelCatCommands(const std::string &command) -> std::vector<std::string> {
-    auto paramsVec = strSplitTrim(command, "\\s");
-    fmt::print("{} \n", paramsVec); /// debug line <------------------------
-    return paramsVec;
-}
-
-auto ProgramManager::getStringVecFromSortCommand(const std::string &command) -> std::vector<std::string> {
-    auto dashVec = strSplitTrim(command, "-");
-    auto paramsVec = std::vector<std::string>();
-    for (int i = 0; const auto &params: dashVec) {
-        if (i == 0) paramsVec.emplace_back(params);
-        else {
-            auto spaceSplit = strSplitTrim(params, "\\s");
-            for (const auto &param: spaceSplit) paramsVec.emplace_back(param);
-        }
-        i++;
-    }
-    fmt::print("{} \n", paramsVec); /// debug line <------------------------
-    return paramsVec;
-}
-
 auto ProgramManager::getStringVecFromEditCommand(const std::string &command) -> std::vector<std::string> {
     auto paramsVec = std::vector<std::string>();
-    auto pipeVec = strSplitTrim(command, "\\|");
+    auto pipeVec = passwordMapper.strSplitTrim(command, "\\|");
     if (pipeVec.size() != 2) {
         return {};
     }
@@ -314,7 +277,7 @@ auto ProgramManager::getStringVecFromEditCommand(const std::string &command) -> 
         paramsVec.emplace_back(el);
         i++;
     }
-    fmt::print("{} \n", paramsVec); /// debug line <------------------------
+//    fmt::print("{} \n", paramsVec); /// debug line <------------------------
     return paramsVec;
 }
 
@@ -453,7 +416,8 @@ auto ProgramManager::executeCommand(const std::string &command) -> void {
 }
 
 auto ProgramManager::executeSearch(const std::string &command) -> void {
-
+//    std::map<Category, std::vector<Password>>()
+//    auto entry =  ;
 }
 
 auto ProgramManager::executeSort(const std::string &command) -> void {

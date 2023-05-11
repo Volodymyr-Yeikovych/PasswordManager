@@ -7,6 +7,7 @@
 
 Category::Category(const std::string &name) {
     this->name = name;
+    this->categoryPasswords = std::vector<Password>();
 }
 
 auto Category::addPassword(const Password &password) -> bool {

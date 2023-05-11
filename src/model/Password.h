@@ -4,7 +4,6 @@
 #pragma once
 
 #include <string>
-#include "Category.h"
 
 #ifndef PJC_PROJECT_PASSWORDMANAGER_PASSWORD_H
 #define PJC_PROJECT_PASSWORDMANAGER_PASSWORD_H
@@ -22,6 +21,7 @@ public:
     bool operator==(const Password &password) const = default;
     bool operator<=>(const Password &password) const = default;
     Password(const std::string& name, const std::string& passText);
+    Password() = default;
     auto setWebsite(const std::string& website) -> void;
     auto setLogin(const std::string& login) -> void;
 };

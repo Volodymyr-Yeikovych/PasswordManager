@@ -5,21 +5,22 @@
 #ifndef PJC_PROJECT_PASSWORDMANAGER_PROGRAMMANAGER_H
 #define PJC_PROJECT_PASSWORDMANAGER_PROGRAMMANAGER_H
 
-
 #include "FileManager.h"
 #include "ConsoleManager.h"
 #include "CryptographyManager.h"
+#include "PasswordMapper.h"
 
 class ProgramManager {
     FileManager fileManager;
     ConsoleManager consoleManager;
     CryptographyManager cryptographyManager;
+    PasswordMapper passwordMapper;
     const std::vector<std::string> SEARCH_EDIT_DELETE_PARAMS_TYPES = {"a", "n", "pw", "c", "w", "l"};
     const std::vector<std::string> SORT_PARAMS_TYPES = {"n", "pw", "c", "w", "l"};
     const std::vector<std::string> SORT_PARAMS_ORDER_TYPES = {"len", "abc", "desc", "asc"};
 public:
     explicit ProgramManager(const FileManager &fileManager, const ConsoleManager &consoleManager,
-                            const CryptographyManager &cryptographyManager);
+                            const CryptographyManager &cryptographyManager, const PasswordMapper &mapper);
 
     auto start() -> void;
 
@@ -61,7 +62,7 @@ public:
 
     auto executeSort(const std::string &command) -> void;
 
-    auto executeAdd(const std::string &command)  -> void;
+    auto executeAdd(const std::string &command) -> void;
 
     auto executeEditPassword(const std::string &command) -> void;
 
@@ -73,30 +74,36 @@ public:
 
     auto getStringVecFromSADCommands(const std::string &command) -> std::vector<std::string>;
 
-    auto strSplit(const std::string &string, const std::string &delim) -> std::vector<std::string>;
-
-    auto leftTrim(std::string &str) -> void;
-    auto rightTrim(std::string &str) -> void;
-    auto trim(std::string &str) -> void;
-
-    static auto exit (int errCode) -> void;
+    static auto exit(int errCode) -> void;
 
     auto isEmptyCommand(const std::vector<std::string> &params) -> bool;
+
     auto isInvalidSADCommandSyntax(const std::vector<std::string> &params) -> bool;
 
     auto isInvalidCommandKeyword(const std::vector<std::string> &params, const std::string &commandKeyword) -> bool;
+
     auto isInvalidSEDCommandTypes(const std::vector<std::string> &params) -> bool;
+
     auto isInvalidAddCommandTypes(const std::vector<std::string> &params) -> bool;
+
     auto isInvalidAddCommandLength(const std::vector<std::string> &params) -> bool;
-    auto strSplitTrim(const std::string &str, const std::string &delim) -> std::vector<std::string>;
+
     auto getStringVecFromAddDelCatCommands(const std::string &command) -> std::vector<std::string>;
+
     auto isInvalidAddDelCatCommandLength(const std::vector<std::string> &params) -> bool;
+
     auto getStringVecFromSortCommand(const std::string &command) -> std::vector<std::string>;
+
     auto isInvalidSortCommandTypes(const std::vector<std::string> &params) -> bool;
+
     auto isInvalidSortParam(const std::string &param) -> bool;
+
     auto isInvalidSortOrder(const std::string &param) -> bool;
+
     auto getStringVecFromEditCommand(const std::string &command) -> std::vector<std::string>;
+
     auto isInvalidEditCommandTypes(const std::vector<std::string> &params) -> bool;
+
     auto isInvalidSEDParamType(const std::string &paramType) -> bool;
 };
 

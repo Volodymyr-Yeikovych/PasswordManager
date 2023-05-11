@@ -3,7 +3,6 @@
 //
 
 #include <string>
-#include "Category.h"
 #include "Password.h"
 
 //auto Password::operator==(const Password &other) -> bool {
@@ -19,6 +18,7 @@ Password::Password(const std::string &name, const std::string &passText) : name(
     this->name = name;
     this->passText = passText;
 }
+
 
 auto Password::setWebsite(const std::string &website) -> void {
     this->website = website;

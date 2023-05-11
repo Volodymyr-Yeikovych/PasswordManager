@@ -5,14 +5,13 @@
 #ifndef PJC_PROJECT_PASSWORDMANAGER_CATEGORY_H
 #define PJC_PROJECT_PASSWORDMANAGER_CATEGORY_H
 
-
 #include <string>
 #include <vector>
 #include "Password.h"
 
 class Category {
     std::string name;
-    std::vector<Password> categoryPasswords = std::vector<Password>();
+    std::vector<Password> categoryPasswords;
 
     public:
         Category(const std::string &name);
