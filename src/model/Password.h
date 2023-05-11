@@ -14,13 +14,14 @@
 class Password{
     std::string name;
     std::string passText;
-    Category category;
     std::string website;
     std::string login;
 
 public:
-    Password(const std::string& name, const std::string& passText, const Category& category);
-
+//    auto operator==(const Password &password) -> bool;
+    bool operator==(const Password &password) const = default;
+    bool operator<=>(const Password &password) const = default;
+    Password(const std::string& name, const std::string& passText);
     auto setWebsite(const std::string& website) -> void;
     auto setLogin(const std::string& login) -> void;
 };

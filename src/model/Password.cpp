@@ -6,11 +6,18 @@
 #include "Category.h"
 #include "Password.h"
 
-Password::Password(const std::string &name, const std::string &passText,
-                   const Category &category) : name(name), passText(passText), category(category) {
+//auto Password::operator==(const Password &other) -> bool {
+//    if (&other == this) return true;
+//    bool equalName = other.name == this->name;
+//    bool equalPassword = other.passText == this->passText;
+//    bool equalWebsite = other.website == this->website;
+//    bool equalLogin = other.login == this->login;
+//    return equalName && equalPassword && equalWebsite && equalLogin;
+//}
+
+Password::Password(const std::string &name, const std::string &passText) : name(name), passText(passText) {
     this->name = name;
     this->passText = passText;
-    this->category = category;
 }
 
 auto Password::setWebsite(const std::string &website) -> void {
@@ -20,3 +27,4 @@ auto Password::setWebsite(const std::string &website) -> void {
 auto Password::setLogin(const std::string &login) -> void {
     this->login = login;
 }
+
