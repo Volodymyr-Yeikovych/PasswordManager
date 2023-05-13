@@ -209,13 +209,13 @@ auto ProgramManager::isInvalidSortCommandTypes(const std::vector<std::string> &p
 
 auto ProgramManager::isInvalidAddCommandTypes(const std::vector<std::string> &params) -> bool {
     if (params[1] != "c" && params[1] != "g") return true;
-    auto valuesVec = passwordMapper.strSplitTrim(params[2], ":");
+    auto valuesVec = PasswordMapper::strSplitTrim(params[2], ":");
     if (valuesVec.size() < 3 || valuesVec.size() > 5) return true;
     return false;
 }
 
 auto ProgramManager::getStringVecFromSADCommands(const std::string &command) -> std::vector<std::string> {
-    auto dashVec = passwordMapper.strSplitTrim(command, "-");
+    auto dashVec = PasswordMapper::strSplitTrim(command, "-");
     auto paramsVec = std::vector<std::string>();
     paramsVec.emplace_back(dashVec[0]);
     for (int i = 1; i < dashVec.size(); i++) {
@@ -223,7 +223,7 @@ auto ProgramManager::getStringVecFromSADCommands(const std::string &command) -> 
 //            consoleManager.println("Error: missing closing quotes(\").");
             return {};
         }
-        auto quoteVec = passwordMapper.strSplitTrim(dashVec[i], "\"");
+        auto quoteVec = PasswordMapper::strSplitTrim(dashVec[i], "\"");
         if (quoteVec.size() != 2) {
 //            consoleManager.println("Error: Invalid number of quotes(\") expected {2}, found {"
 //                                   + std::to_string(quoteVec.size()) + "}");
@@ -237,18 +237,18 @@ auto ProgramManager::getStringVecFromSADCommands(const std::string &command) -> 
 }
 
 auto ProgramManager::getStringVecFromAddDelCatCommands(const std::string &command) -> std::vector<std::string> {
-    auto paramsVec = passwordMapper.strSplitTrim(command, "\\s");
+    auto paramsVec = PasswordMapper::strSplitTrim(command, "\\s");
 //    fmt::print("{} \n", paramsVec); /// debug line <------------------------
     return paramsVec;
 }
 
 auto ProgramManager::getStringVecFromSortCommand(const std::string &command) -> std::vector<std::string> {
-    auto dashVec = passwordMapper.strSplitTrim(command, "-");
+    auto dashVec = PasswordMapper::strSplitTrim(command, "-");
     auto paramsVec = std::vector<std::string>();
     for (int i = 0; const auto &params: dashVec) {
         if (i == 0) paramsVec.emplace_back(params);
         else {
-            auto spaceSplit = passwordMapper.strSplitTrim(params, "\\s");
+            auto spaceSplit = PasswordMapper::strSplitTrim(params, "\\s");
             for (const auto &param: spaceSplit) paramsVec.emplace_back(param);
         }
         i++;
@@ -259,7 +259,7 @@ auto ProgramManager::getStringVecFromSortCommand(const std::string &command) -> 
 
 auto ProgramManager::getStringVecFromEditCommand(const std::string &command) -> std::vector<std::string> {
     auto paramsVec = std::vector<std::string>();
-    auto pipeVec = passwordMapper.strSplitTrim(command, "\\|");
+    auto pipeVec = PasswordMapper::strSplitTrim(command, "\\|");
     if (pipeVec.size() != 2) {
         return {};
     }
@@ -423,15 +423,25 @@ auto ProgramManager::executeCommand(const std::string &command) -> void {
 auto ProgramManager::executeSearch(const std::string &command) -> void {
     auto fileContent = fileManager.getFileContents(filePath);
     auto categoriesVec = PasswordMapper::mapTextToCategoryVec(fileContent);
+    for (const auto &cat : categoriesVec) {
+        fmt::print("{}: [", cat.getName());
+        for (const auto &psw : cat.getPasswordVec()) {
+            fmt::print("({}, {}, {}, {})", psw.getName(), psw.getPassword(), psw.getWebsite(), psw.getLogin());
+        }
+        fmt::print("]\n");
+    }
     auto commandParams = getStringVecFromSADCommands(command);
-    auto searchPsw = PasswordMapper::mapSearchCommandEntryToPassword(command);
-    auto specificCat = PasswordMapper::getCategoryFromSearchCommand(command);
+    auto searchPsw = PasswordMapper::mapSearchCommandEntryToPassword(commandParams);
+    auto specificCat = PasswordMapper::getCategoryFromSearchCommand(commandParams);
     auto entryMap = std::map<Category, std::vector<Password>>();
     for (auto existingCats : categoriesVec) {
-        entryMap[existingCats] = existingCats.getMatchingVec(searchPsw);
+        auto matches = existingCats.getMatchingVec(searchPsw);
+        if (!matches.empty()) entryMap[existingCats] = matches;
     }
-    if (!specificCat.getName().empty()) eraseNotMatching(specificCat, entryMap);
-    consoleManager.printMap(entryMap);
+    if (!specificCat.getName().empty()) {
+        eraseNotMatching(specificCat, entryMap);
+    }
+    consoleManager.printCategoryMap(entryMap);
 }
 
 auto ProgramManager::executeSort(const std::string &command) -> void {

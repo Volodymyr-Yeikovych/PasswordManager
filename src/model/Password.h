@@ -12,7 +12,7 @@
 
 class Password{
     std::string name;
-    std::string passText;
+    std::string password;
     std::string website;
     std::string login;
 
@@ -22,6 +22,12 @@ public:
     bool operator<=>(const Password &password) const = default;
     Password(const std::string& name, const std::string& passText);
     Password() = default;
-    auto setWebsite(const std::string& website) -> void;
-    auto setLogin(const std::string& login) -> void;
+    auto setWebsite(const std::string &website) -> void;
+    auto setLogin(const std::string &login) -> void;
+    auto setName(const std::string &name) -> void;
+    auto setPassword(const std::string &password) -> void;
+    auto getWebsite() const -> std::string;
+    auto getLogin() const -> std::string;
+    auto getName() const -> std::string;
+    auto getPassword() const -> std::string;
 };

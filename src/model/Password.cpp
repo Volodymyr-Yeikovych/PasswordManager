@@ -8,15 +8,15 @@
 //auto Password::operator==(const Password &other) -> bool {
 //    if (&other == this) return true;
 //    bool equalName = other.name == this->name;
-//    bool equalPassword = other.passText == this->passText;
+//    bool equalPassword = other.password == this->password;
 //    bool equalWebsite = other.website == this->website;
 //    bool equalLogin = other.login == this->login;
 //    return equalName && equalPassword && equalWebsite && equalLogin;
 //}
 
-Password::Password(const std::string &name, const std::string &passText) : name(name), passText(passText) {
+Password::Password(const std::string &name, const std::string &passText) : name(name), password(passText) {
     this->name = name;
-    this->passText = passText;
+    this->password = passText;
 }
 
 
@@ -28,3 +28,26 @@ auto Password::setLogin(const std::string &login) -> void {
     this->login = login;
 }
 
+auto Password::setName(const std::string &name) -> void {
+    this->name = name;
+}
+
+auto Password::setPassword(const std::string &password) -> void {
+    this->password = password;
+}
+
+auto Password::getName() const -> std::string {
+    return name;
+}
+
+auto Password::getPassword() const -> std::string {
+    return password;
+}
+
+auto Password::getLogin() const -> std::string {
+    return login;
+}
+
+auto Password::getWebsite() const -> std::string {
+    return website;
+}

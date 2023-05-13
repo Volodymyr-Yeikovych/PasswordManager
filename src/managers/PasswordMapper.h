@@ -13,9 +13,9 @@
 class PasswordMapper {
 public:
     auto mapFileEntryToPassword(const std::string &line) -> Password;
-    auto static mapSearchCommandEntryToPassword(const std::string &command) -> Password;
+    auto static mapSearchCommandEntryToPassword(const std::vector<std::string> &commandParams) -> Password;
     auto mapPasswordToFileEntry(const Password &entry) -> std::string;
-    auto static getCategoryFromSearchCommand(const std::string &command) -> Category;
+    auto static getCategoryFromSearchCommand(const std::vector<std::string> &commandParams) -> Category;
     auto static mapPasswordToString(const Password &password) -> std::string;
     auto static mapCategoryToString(const Category &category) -> std::string;
 

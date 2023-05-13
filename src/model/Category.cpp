@@ -3,6 +3,7 @@
 //
 
 #include <algorithm>
+#include <tuple>
 #include "Category.h"
 
 Category::Category(const std::string &name) {
@@ -13,18 +14,6 @@ Category::Category(const std::string &name) {
 Category::Category(const std::string &name, const std::vector<Password> &passVec) {
     this->name = name;
     this->categoryPasswords = passVec;
-}
-
-auto operator<(const Category &left, const Category &right) -> bool {
-    return left.getName().size() < right.getName().size();
-}
-
-auto operator<=>(const Category &left, const Category &right) -> bool {
-    auto ls = left.getName().size();
-    auto rs = right.getName().size();
-    if (ls == rs) return ls == rs;
-    if (ls < rs) return ls < rs;
-    return ls > rs;
 }
 
 auto Category::addPassword(const Password &password) -> bool {
@@ -50,6 +39,57 @@ auto Category::removePassword(const Password &password) -> bool {
 
 auto Category::getName() const -> std::string {
     return this->name;
+}
+
+auto Category::getMatchingVec(const Password &password) -> std::vector<Password> {
+    auto matchingVec = std::vector<Password>();
+    for (auto const &entry : categoryPasswords) {
+        auto matchingName = password.getName().empty() || password.getName() == entry.getName();
+        auto matchingPassword = password.getPassword().empty() || password.getPassword() == entry.getPassword();
+        auto matchingWebsite =  password.getWebsite().empty() || password.getWebsite() == entry.getWebsite();
+        auto matchingLogin = password.getLogin().empty() || password.getLogin() == entry.getLogin();
+        if (matchingName && matchingPassword && matchingWebsite && matchingLogin) matchingVec.emplace_back(entry);
+    }
+    return matchingVec;
+}
+
+auto Category::operator<(const Category &other) const -> bool {
+    auto tNameLen = this->getName().size();
+    auto oNameLen = other.getName().size();
+    const auto &tVec = this->getPasswordVec();
+    const auto &oVec = other.getPasswordVec();
+//    auto elementsEqual = std::ranges::equal(tVec, oVec);
+    auto elementsEqual = tVec.size() == oVec.size();
+    return std::tie(tNameLen) < std::tie(oNameLen);
+}
+
+//
+//auto Category::operator>(const Category &other) const -> bool {
+//    auto tNameLen = this->getName().size();
+//    auto oNameLen = other.getName().size();
+//    return tNameLen > oNameLen;
+//}
+
+//auto Category::operator<=>(const Category &other) const -> bool {
+//    auto tNameLen = this->getName().size();
+//    auto oNameLen = other.getName().size();
+//    const auto &tVec = this->getPasswordVec();
+//    const auto &oVec = other.getPasswordVec();
+//    auto elementsEqual = std::ranges::equal(tVec, oVec);
+//    if (elementsEqual) {
+//        if (tNameLen == oNameLen) return tNameLen == oNameLen;
+//        if (tNameLen < oNameLen) return tNameLen < oNameLen;
+//        if (tNameLen > oNameLen) return tNameLen > oNameLen;
+//    }
+//    return false;
+//}
+
+auto Category::operator==(const Category &other) const -> bool {
+    return this->getName() == other.getName() && std::ranges::equal(this->getPasswordVec(), other.getPasswordVec());
+}
+
+auto Category::getPasswordVec() const -> std::vector<Password> {
+    return categoryPasswords;
 }
 
 

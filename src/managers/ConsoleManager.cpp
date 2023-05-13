@@ -47,7 +47,7 @@ auto ConsoleManager::readString() -> std::string {
     return output;
 }
 
-auto ConsoleManager::printMap(const std::map<Category, std::vector<Password>> &toPrint) -> void {
+auto ConsoleManager::printCategoryMap(const std::map<Category, std::vector<Password>> &toPrint) -> void {
     for (const auto &entry : toPrint) {
         auto passVec = std::vector<std::string>();
         for (const auto &psw : entry.second)

@@ -5,6 +5,8 @@
 #include <filesystem>
 #include <fstream>
 #include "FileManager.h"
+#include <fmt/core.h>
+#include <fmt/ranges.h>
 
 FileManager::FileManager(const std::string &dir) {
     this->defaultDir = dir;
@@ -46,7 +48,7 @@ auto FileManager::getFilesVector() -> std::vector<std::filesystem::path> {
 }
 
 auto FileManager::getFileLines(const std::filesystem::path &filePath) -> std::vector<std::string>{
-    auto out = std::fstream(filePath, std::fstream::out | std::fstream::app);
+    auto out = std::fstream(filePath, std::fstream::in | std::fstream::app);
     auto line = std::string();
     auto lines = std::vector<std::string>();
     while (std::getline(out, line)) {
