@@ -14,11 +14,17 @@ class Category {
     std::vector<Password> categoryPasswords;
 
     public:
-        Category(const std::string &name);
+        explicit Category(const std::string &name);
+        explicit Category(const std::string &name, const std::vector<Password> &passVec);
+        auto operator==(const Category &other) const -> bool = default;
+        auto operator<=>(const Category &other) const -> bool;
+        auto operator<(const Category &other) const -> bool;
         auto addPassword(const Password &password) -> bool;
         auto removePassword(const Password &password) -> bool;
         auto isPresent(const Password &password) -> bool;
         auto getIterator(const Password &password) -> std::vector<Password>::iterator;
+        auto getMatchingVec(const Password &password) -> std::vector<Password>;
+        auto getName() const -> std::string;
 };
 
 

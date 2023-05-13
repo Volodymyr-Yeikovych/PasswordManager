@@ -12,27 +12,28 @@
 
 class PasswordMapper {
 public:
-    auto mapStringToPsw(const std::string &line) -> Password;
-
-    auto mapPswToString(const Password &entry) -> std::string;
-
+    auto mapFileEntryToPassword(const std::string &line) -> Password;
+    auto static mapSearchCommandEntryToPassword(const std::string &command) -> Password;
+    auto mapPasswordToFileEntry(const Password &entry) -> std::string;
+    auto static getCategoryFromSearchCommand(const std::string &command) -> Category;
+    auto static mapPasswordToString(const Password &password) -> std::string;
     auto static mapCategoryToString(const Category &category) -> std::string;
 
     auto static mapStringToCategory(const std::string &stack) -> Category;
 
-    auto static mapTextToCategoryMap(const std::string &text) -> std::map<Category, std::vector<std::string>>;
+    auto static mapTextToCategoryVec(const std::string &text) -> std::vector<Category>;
 
-    auto static mapCategoryMapToText(const std::map<Category, std::vector<std::string>> &categoryMap) -> std::string;
+    auto static mapCategoryVecToText(const std::vector<Category> &categoryVec) -> std::string;
 
-    auto strSplit(const std::string &string, const std::string &delim) -> std::vector<std::string>;
+    auto static strSplit(const std::string &string, const std::string &delim) -> std::vector<std::string>;
 
-    auto strSplitTrim(const std::string &str, const std::string &delim) -> std::vector<std::string>;
+    auto static strSplitTrim(const std::string &str, const std::string &delim) -> std::vector<std::string>;
 
-    auto leftTrim(std::string &str) -> void;
+    auto static leftTrim(std::string &str) -> void;
 
-    auto rightTrim(std::string &str) -> void;
+    auto static rightTrim(std::string &str) -> void;
 
-    auto trim(std::string &str) -> void;
+    auto static trim(std::string &str) -> void;
 };
 
 

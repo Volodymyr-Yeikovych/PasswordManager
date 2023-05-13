@@ -15,6 +15,7 @@ class ProgramManager {
     ConsoleManager consoleManager;
     CryptographyManager cryptographyManager;
     PasswordMapper passwordMapper;
+    std::filesystem::path filePath = std::filesystem::path();
     const std::vector<std::string> SEARCH_EDIT_DELETE_PARAMS_TYPES = {"a", "n", "pw", "c", "w", "l"};
     const std::vector<std::string> SORT_PARAMS_TYPES = {"n", "pw", "c", "w", "l"};
     const std::vector<std::string> SORT_PARAMS_ORDER_TYPES = {"len", "abc", "desc", "asc"};
@@ -105,6 +106,7 @@ public:
     auto isInvalidEditCommandTypes(const std::vector<std::string> &params) -> bool;
 
     auto isInvalidSEDParamType(const std::string &paramType) -> bool;
+    auto eraseNotMatching(const Category &searchCat, std::map<Category, std::vector<Password>> &matchingPsw) -> void;
 };
 
 

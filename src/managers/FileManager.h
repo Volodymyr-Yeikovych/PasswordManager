@@ -13,15 +13,24 @@
 class FileManager {
     std::string defaultDir;
 
-    public:
-        FileManager(const std::string& dir);
-        FileManager();
-        auto operator= (FileManager const& fileManager) -> FileManager;
-        auto countFilesInDefDir() -> int;
-        auto countFilesDir(const std::string &dir) -> int;
-        auto getFilesVector() -> std::vector<std::filesystem::path>;
-        auto getFilesVector(const std::string &dir) -> std::vector<std::filesystem::path>;
-        auto getFileContents(const std::filesystem::path &filePath) -> std::vector<std::string>;
+public:
+    FileManager(const std::string &dir);
+
+    FileManager();
+
+    auto operator=(FileManager const &fileManager) -> FileManager;
+
+    auto countFilesInDefDir() -> int;
+
+    auto countFilesDir(const std::string &dir) -> int;
+
+    auto getFilesVector() -> std::vector<std::filesystem::path>;
+
+    auto getFilesVector(const std::string &dir) -> std::vector<std::filesystem::path>;
+
+    auto getFileLines(const std::filesystem::path &filePath) -> std::vector<std::string>;
+
+    auto getFileContents(const std::filesystem::path &filePath) -> std::string;
 };
 
 

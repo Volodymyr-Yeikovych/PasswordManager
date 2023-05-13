@@ -45,7 +45,7 @@ auto FileManager::getFilesVector() -> std::vector<std::filesystem::path> {
     return getFilesVector(defaultDir);
 }
 
-auto FileManager::getFileContents(const std::filesystem::path &filePath) -> std::vector<std::string>{
+auto FileManager::getFileLines(const std::filesystem::path &filePath) -> std::vector<std::string>{
     auto out = std::fstream(filePath, std::fstream::out | std::fstream::app);
     auto line = std::string();
     auto lines = std::vector<std::string>();
@@ -54,4 +54,12 @@ auto FileManager::getFileContents(const std::filesystem::path &filePath) -> std:
     }
     out.close();
     return lines;
+}
+
+auto FileManager::getFileContents(const std::filesystem::path &filePath) -> std::string{
+    auto content = std::string();
+    for (const auto &line : getFileLines(filePath)) {
+        content.append(line);
+    }
+    return content;
 }

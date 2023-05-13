@@ -6,7 +6,7 @@
 #include "ProgramManager.h"
 #include <regex>
 
-auto PasswordMapper::mapStringToPsw(const std::string &line) -> Password {
+auto PasswordMapper::mapFileEntryToPassword(const std::string &line) -> Password {
     auto dDotVec = strSplitTrim(line, ":");
     if (dDotVec.size() < 3 || dDotVec.size() > 5) return {};
 
@@ -22,6 +22,21 @@ auto PasswordMapper::mapStringToPsw(const std::string &line) -> Password {
     mappedPassword.setLogin(login);
 
     return mappedPassword;
+}
+
+auto PasswordMapper::mapTextToCategoryVec(const std::string &text) -> std::vector<Category> {
+    auto categoryVec = std::vector<Category>();
+    auto lCurSplit = PasswordMapper::strSplitTrim(text, "{");
+    auto saveCatName = lCurSplit[0];
+    for (int i = 1; i < lCurSplit.size(); i++) {
+        auto rCurSplit = PasswordMapper::strSplitTrim(lCurSplit[i], "}");
+        if (rCurSplit.size() != 2) throw std::runtime_error("Error: invalid file format. Impossible to parse.");
+        auto passVec = PasswordMapper::strSplitTrim(rCurSplit[0], "\n");
+//        for ()
+        auto nextCatName = rCurSplit[1];
+// add next cat to save
+// cat(name, save)
+    }
 }
 
 auto PasswordMapper::strSplit(const std::string &string, const std::string &delim) -> std::vector<std::string> {

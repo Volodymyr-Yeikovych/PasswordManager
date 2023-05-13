@@ -38,7 +38,6 @@ auto ProgramManager::start() -> void {
     consoleManager.displayFiles(pathVector);
     consoleManager.print("Enter here: ");
     auto input = consoleManager.readNum();
-    auto filePath = std::filesystem::path();
     if (inputOutOfBounds(input, pathVector.size())) {
         consoleManager.print("Provide custom path: ");
         filePath = std::filesystem::path(consoleManager.readString());
@@ -57,7 +56,7 @@ auto ProgramManager::start() -> void {
         cryptographyManager.encrypt(filePath, userPassword);
     } else {
         cryptographyManager.decrypt(filePath, userPassword);
-        auto decryptedFile = fileManager.getFileContents(filePath);
+        auto decryptedFile = fileManager.getFileLines(filePath);
         consoleManager.println("Write help to list available commands.");
         auto command = std::string();
         while (!isExitCommand(command)) {
@@ -403,6 +402,12 @@ auto ProgramManager::isHelpCommand(const std::string &command) -> bool {
     return command == "help";
 }
 
+auto ProgramManager::eraseNotMatching(const Category &searchCat, std::map<Category, std::vector<Password>> &matchingPsw) -> void{
+    for (const auto &entry : matchingPsw) {
+        if (entry.first != searchCat) matchingPsw.erase(entry.first);
+    }
+}
+
 auto ProgramManager::executeCommand(const std::string &command) -> void {
     if (isExitCommand(command)) return;
     if (isHelpCommand(command)) listCommands();
@@ -416,8 +421,17 @@ auto ProgramManager::executeCommand(const std::string &command) -> void {
 }
 
 auto ProgramManager::executeSearch(const std::string &command) -> void {
-//    std::map<Category, std::vector<Password>>()
-//    auto entry =  ;
+    auto fileContent = fileManager.getFileContents(filePath);
+    auto categoriesVec = PasswordMapper::mapTextToCategoryVec(fileContent);
+    auto commandParams = getStringVecFromSADCommands(command);
+    auto searchPsw = PasswordMapper::mapSearchCommandEntryToPassword(command);
+    auto specificCat = PasswordMapper::getCategoryFromSearchCommand(command);
+    auto entryMap = std::map<Category, std::vector<Password>>();
+    for (auto existingCats : categoriesVec) {
+        entryMap[existingCats] = existingCats.getMatchingVec(searchPsw);
+    }
+    if (!specificCat.getName().empty()) eraseNotMatching(specificCat, entryMap);
+    consoleManager.printMap(entryMap);
 }
 
 auto ProgramManager::executeSort(const std::string &command) -> void {

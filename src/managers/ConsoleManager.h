@@ -9,6 +9,8 @@
 
 #include <filesystem>
 #include <vector>
+#include <map>
+#include "../model/Category.h"
 
 class ConsoleManager {
 
@@ -18,7 +20,8 @@ public:
     auto println() -> void;
     auto displayFiles(const std::vector<std::filesystem::path> &files) -> void;
     auto readNum() -> int;
-    auto readString() -> std::string ;
+    auto readString() -> std::string;
+    auto printMap(const std::map<Category, std::vector<Password>> &toPrint) -> void;
 };
 
 

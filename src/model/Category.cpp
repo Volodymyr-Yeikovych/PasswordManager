@@ -10,6 +10,23 @@ Category::Category(const std::string &name) {
     this->categoryPasswords = std::vector<Password>();
 }
 
+Category::Category(const std::string &name, const std::vector<Password> &passVec) {
+    this->name = name;
+    this->categoryPasswords = passVec;
+}
+
+auto operator<(const Category &left, const Category &right) -> bool {
+    return left.getName().size() < right.getName().size();
+}
+
+auto operator<=>(const Category &left, const Category &right) -> bool {
+    auto ls = left.getName().size();
+    auto rs = right.getName().size();
+    if (ls == rs) return ls == rs;
+    if (ls < rs) return ls < rs;
+    return ls > rs;
+}
+
 auto Category::addPassword(const Password &password) -> bool {
     categoryPasswords.push_back(password);
     return true;
@@ -29,6 +46,10 @@ auto Category::removePassword(const Password &password) -> bool {
         return true;
     }
     return false;
+}
+
+auto Category::getName() const -> std::string {
+    return this->name;
 }
 
 
