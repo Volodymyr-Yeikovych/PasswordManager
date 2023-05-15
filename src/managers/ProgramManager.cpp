@@ -211,10 +211,37 @@ auto ProgramManager::isInvalidAddCommandTypes(const std::vector<std::string> &pa
     if (params[1] != "c" && params[1] != "g") return true;
     auto valuesVec = PasswordMapper::strSplitTrim(params[2], ":");
     if (valuesVec.size() < 3 || valuesVec.size() > 5) return true;
+    auto paramsVec = PasswordMapper::strSplitTrim(valuesVec[1], "-");
+    if (paramsVec.size() < 3 || paramsVec.size() > 4) return true;
+    for (const auto &param : paramsVec) {
+        if (!param.empty() && param != "u" && param != "U" && param != "s" && param != "S") {
+            try {
+                auto intVal = std::stoi(param);
+                continue;
+            } catch (std::invalid_argument &e) {
+                return true;
+            }
+        }
+        if (param.empty() || param == "u" || param == "U" || param == "s" || param == "S") continue;
+        return true;
+    }
     return false;
 }
 
-auto ProgramManager::getStringVecFromSADCommands(const std::string &command) -> std::vector<std::string> {
+auto ProgramManager::getStringVecFromAddCommands(const std::string &command) -> std::vector<std::string> {
+    auto quoteVec = PasswordMapper::strSplitTrim(command, "\"");
+    auto leftSplit = PasswordMapper::strSplitTrim(quoteVec[0], "\\s");
+    auto rightSplit = quoteVec[1];
+
+    auto paramsVec = std::vector<std::string>();
+    paramsVec.emplace_back(leftSplit[0]);
+    paramsVec.emplace_back(leftSplit[1].substr(1));
+    paramsVec.emplace_back(rightSplit);
+    fmt::print("{} add\n", paramsVec); /// debug line <------------------------
+    return paramsVec;
+}
+
+auto ProgramManager::getStringVecFromSearchDeleteCommands(const std::string &command) -> std::vector<std::string> {
     auto dashVec = PasswordMapper::strSplitTrim(command, "-");
     auto paramsVec = std::vector<std::string>();
     paramsVec.emplace_back(dashVec[0]);
@@ -232,7 +259,7 @@ auto ProgramManager::getStringVecFromSADCommands(const std::string &command) -> 
         paramsVec.emplace_back(quoteVec[0]);
         paramsVec.emplace_back(quoteVec[1]);
     }
-    fmt::print("{} \n", paramsVec); /// debug line <------------------------
+//    fmt::print("{} \n", paramsVec); /// debug line <------------------------
     return paramsVec;
 }
 
@@ -263,10 +290,10 @@ auto ProgramManager::getStringVecFromEditCommand(const std::string &command) -> 
     if (pipeVec.size() != 2) {
         return {};
     }
-    auto firstHalf = getStringVecFromSADCommands(pipeVec[0]);
+    auto firstHalf = getStringVecFromSearchDeleteCommands(pipeVec[0]);
     auto modInput = std::string("| ");
     modInput.append(pipeVec[1]);
-    auto secondHalf = getStringVecFromSADCommands(modInput);
+    auto secondHalf = getStringVecFromSearchDeleteCommands(modInput);
     if (firstHalf.empty() || secondHalf.empty()) {
         return {};
     }
@@ -321,7 +348,7 @@ auto ProgramManager::isInvalidEditCommandTypes(const std::vector<std::string> &p
  **
  **/
 auto ProgramManager::isSearchCommand(const std::string &command) -> bool {
-    auto paramsVec = getStringVecFromSADCommands(command);
+    auto paramsVec = getStringVecFromSearchDeleteCommands(command);
     if (isEmptyCommand(paramsVec)) return false;
     if (isInvalidSADCommandSyntax(paramsVec)) return false;
     if (isInvalidCommandKeyword(paramsVec, "search")) return false;
@@ -344,7 +371,7 @@ auto ProgramManager::isSortCommand(const std::string &command) -> bool {
      **
      **/
 auto ProgramManager::isAddCommand(const std::string &command) -> bool {
-    auto paramsVec = getStringVecFromSADCommands(command);
+    auto paramsVec = getStringVecFromAddCommands(command);
     if (isEmptyCommand(paramsVec)) return false;
     if (isInvalidSADCommandSyntax(paramsVec)) return false;
     if (isInvalidCommandKeyword(paramsVec, "add")) return false;
@@ -368,7 +395,7 @@ auto ProgramManager::isEditPasswordCommand(const std::string &command) -> bool {
      **
      **/
 auto ProgramManager::isDeletePasswordCommand(const std::string &command) -> bool {
-    auto paramsVec = getStringVecFromSADCommands(command);
+    auto paramsVec = getStringVecFromSearchDeleteCommands(command);
     if (isEmptyCommand(paramsVec)) return false;
     if (isInvalidSADCommandSyntax(paramsVec)) return false;
     if (isInvalidCommandKeyword(paramsVec, "delete")) return false;
@@ -410,37 +437,38 @@ auto ProgramManager::eraseNotMatching(const Category &searchCat, std::map<Catego
 
 auto ProgramManager::executeCommand(const std::string &command) -> void {
     if (isExitCommand(command)) return;
-    if (isHelpCommand(command)) listCommands();
-    if (isSearchCommand(command)) executeSearch(command);
-    if (isSortCommand(command)) executeSort(command);
-    if (isAddCommand(command)) executeAdd(command);
-    if (isEditPasswordCommand(command)) executeEditPassword(command);
-    if (isDeletePasswordCommand(command)) executeDeletePassword(command);
-    if (isAddCategoryCommand(command)) executeAddCategory(command);
-    if (isDeleteCategoryCommand(command)) executeDeleteCategory(command);
+    try {
+        if (isHelpCommand(command)) listCommands();
+        if (isSearchCommand(command)) executeSearch(command);
+        if (isSortCommand(command)) executeSort(command);
+        if (isAddCommand(command)) executeAdd(command);
+        if (isEditPasswordCommand(command)) executeEditPassword(command);
+        if (isDeletePasswordCommand(command)) executeDeletePassword(command);
+        if (isAddCategoryCommand(command)) executeAddCategory(command);
+        if (isDeleteCategoryCommand(command)) executeDeleteCategory(command);
+    } catch (std::invalid_argument &e) {
+        consoleManager.println(e.what());
+    }
 }
 
 auto ProgramManager::executeSearch(const std::string &command) -> void {
     auto fileContent = fileManager.getFileContents(filePath);
     auto categoriesVec = PasswordMapper::mapTextToCategoryVec(fileContent);
-    for (const auto &cat : categoriesVec) {
-        fmt::print("{}: [", cat.getName());
-        for (const auto &psw : cat.getPasswordVec()) {
-            fmt::print("({}, {}, {}, {})", psw.getName(), psw.getPassword(), psw.getWebsite(), psw.getLogin());
-        }
-        fmt::print("]\n");
-    }
-    auto commandParams = getStringVecFromSADCommands(command);
-    auto searchPsw = PasswordMapper::mapSearchCommandEntryToPassword(commandParams);
+    auto commandParams = getStringVecFromSearchDeleteCommands(command);
+
+    auto searchPsw = PasswordMapper::getPasswordFromSearchCommand(commandParams);
     auto specificCat = PasswordMapper::getCategoryFromSearchCommand(commandParams);
+
     auto entryMap = std::map<Category, std::vector<Password>>();
     for (auto existingCats : categoriesVec) {
         auto matches = existingCats.getMatchingVec(searchPsw);
         if (!matches.empty()) entryMap[existingCats] = matches;
     }
+
     if (!specificCat.getName().empty()) {
         eraseNotMatching(specificCat, entryMap);
     }
+
     consoleManager.printCategoryMap(entryMap);
 }
 
@@ -449,7 +477,27 @@ auto ProgramManager::executeSort(const std::string &command) -> void {
 }
 
 auto ProgramManager::executeAdd(const std::string &command) -> void {
+    auto fileContent = fileManager.getFileContents(filePath);
+    auto categoriesVec = PasswordMapper::mapTextToCategoryVec(fileContent);
+    auto commandParams = getStringVecFromSearchDeleteCommands(command);
 
+    auto passwordToAdd = PasswordMapper::getPasswordFromAddCommand(commandParams);
+    auto entryCat = PasswordMapper::getCategoryFromAddCommand(commandParams);
+
+    auto contains = false;
+    for (auto const &cat : categoriesVec) {
+        if (cat.getName() == entryCat.getName()) {
+            contains = true;
+            entryCat = cat;
+            break;
+        }
+    }
+    if (!contains)
+        throw std::invalid_argument("Trying to add password in non-existent category. Try command -> addcat " + entryCat.getName());
+
+    entryCat.addPassword(passwordToAdd);
+    auto newFileContent = PasswordMapper::mapCategoryVecToText(categoriesVec);
+    fileManager.setFileContents(newFileContent);
 }
 
 auto ProgramManager::executeEditPassword(const std::string &command) -> void {

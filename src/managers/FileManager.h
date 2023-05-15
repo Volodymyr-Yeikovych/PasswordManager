@@ -31,6 +31,8 @@ public:
     auto getFileLines(const std::filesystem::path &filePath) -> std::vector<std::string>;
 
     auto getFileContents(const std::filesystem::path &filePath) -> std::string;
+
+    auto setFileContents(const std::string &fileContent) -> bool;
 };
 
 

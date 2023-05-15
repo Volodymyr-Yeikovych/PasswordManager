@@ -65,3 +65,7 @@ auto FileManager::getFileContents(const std::filesystem::path &filePath) -> std:
     }
     return content;
 }
+
+auto FileManager::setFileContents(const std::string &fileContent) -> bool {
+    return false;
+}

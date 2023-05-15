@@ -3,10 +3,10 @@
 //
 
 #include "PasswordMapper.h"
-#include "ProgramManager.h"
 #include "fmt/core.h"
 #include "fmt/ranges.h"
 #include <regex>
+#include <random>
 
 auto PasswordMapper::mapFileEntryToPassword(const std::string &line) -> Password {
     auto dDotVec = strSplitTrim(line, ":");
@@ -54,11 +54,15 @@ auto PasswordMapper::mapTextToCategoryVec(const std::string &text) -> std::vecto
     return categoryVec;
 }
 
-auto PasswordMapper::mapSearchCommandEntryToPassword(const std::vector<std::string> &commandParams) -> Password {
+auto PasswordMapper::mapCategoryVecToText(const std::vector<Category> &categoryVec) -> std::string {
+    return {};
+}
+
+auto PasswordMapper::getPasswordFromSearchCommand(const std::vector<std::string> &commandParams) -> Password {
     auto password = Password();
     for (int i = 1; i < commandParams.size(); i += 2) {
-        const auto& type = commandParams[i];
-        const auto& param = commandParams[i + 1];
+        const auto &type = commandParams[i];
+        const auto &param = commandParams[i + 1];
         if (type == "c") continue;
         if (type == "a") {
             if (password.getName().empty()) password.setName(param);
@@ -82,6 +86,22 @@ auto PasswordMapper::mapSearchCommandEntryToPassword(const std::vector<std::stri
     return password;
 }
 
+auto PasswordMapper::getPasswordFromAddCommand(const std::vector<std::string> &commandParams) -> Password {
+    auto isGeneratedPassword = commandParams[1] == "g";
+    auto paramsVec = strSplitTrim(commandParams[2], ":");
+    auto name = paramsVec[0];
+    auto strPass = paramsVec[1];
+    auto website = std::string();
+    auto login = std::string();
+    if (paramsVec.size() > 3) website[3];
+    if (paramsVec.size() > 4) login[4];
+    if (isGeneratedPassword) strPass = generatePassword(strPass);
+    auto password = Password(name, strPass);
+    password.setWebsite(website);
+    password.setLogin(login);
+    return password;
+}
+
 auto PasswordMapper::getCategoryFromSearchCommand(const std::vector<std::string> &commandParams) -> Category {
     for (int i = 1; i < commandParams.size(); i += 2) {
         const auto &type = commandParams[i];
@@ -91,8 +111,42 @@ auto PasswordMapper::getCategoryFromSearchCommand(const std::vector<std::string>
     return {};
 }
 
+auto PasswordMapper::getCategoryFromAddCommand(const std::vector<std::string> &commandParams) -> Category {
+    return Category(strSplitTrim(commandParams[2], ":")[2]);
+}
+
 auto PasswordMapper::mapPasswordToString(const Password &password) -> std::string {
-    return std::string(password.getName() + ":" + password.getPassword() + ":" + password.getWebsite() + ":" + password.getLogin() + ";");
+    return std::string(password.getName() + ":" + password.getPassword() + ":" + password.getWebsite() + ":" +
+                       password.getLogin() + ";");
+}
+
+auto PasswordMapper::generatePassword(const std::string &params) -> std::string {
+    auto paramsVec = strSplitTrim(params, "-");
+    auto size = int();
+    auto isUpper = bool();
+    auto isSpecial = bool();
+    for (auto const &param: paramsVec) {
+        if (param == "u") isUpper = false;
+        if (param == "U") isUpper = true;
+        if (param == "s") isSpecial = false;
+        if (param == "S") isSpecial = true;
+        try {
+            size = std::stoi(param);
+        } catch (std::invalid_argument &e) {
+            continue;
+        }
+    }
+    return createPassword(size, isUpper, isSpecial);
+}
+
+auto PasswordMapper::createPassword(int size, bool isUpper, bool isSpecial) -> std::string {
+    std::random_device dev;
+    std::mt19937 mt(dev());
+    auto upperInc = isUpper ? 26 : 0;
+    auto specialInc = isSpecial ? 24 : 0;
+    std::uniform_int_distribution<int> distribution(0, 35 + upperInc + specialInc);
+    auto password = std::string();
+    for (int i = 0; i < size; i++) password.append(randomPool[distribution(mt)]);
 }
 
 auto PasswordMapper::strSplit(const std::string &string, const std::string &delim) -> std::vector<std::string> {

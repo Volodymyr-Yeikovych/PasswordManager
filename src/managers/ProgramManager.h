@@ -73,7 +73,7 @@ public:
 
     auto executeDeleteCategory(const std::string &command) -> void;
 
-    auto getStringVecFromSADCommands(const std::string &command) -> std::vector<std::string>;
+    auto getStringVecFromSearchDeleteCommands(const std::string &command) -> std::vector<std::string>;
 
     static auto exit(int errCode) -> void;
 
@@ -90,6 +90,7 @@ public:
     auto isInvalidAddCommandLength(const std::vector<std::string> &params) -> bool;
 
     auto getStringVecFromAddDelCatCommands(const std::string &command) -> std::vector<std::string>;
+    auto getStringVecFromAddCommands(const std::string &command) -> std::vector<std::string>;
 
     auto isInvalidAddDelCatCommandLength(const std::vector<std::string> &params) -> bool;
 
