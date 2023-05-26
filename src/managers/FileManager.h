@@ -32,7 +32,7 @@ public:
 
     auto getFileContents(const std::filesystem::path &filePath) -> std::string;
 
-    auto setFileContents(const std::string &fileContent) -> bool;
+    auto setFileContents(const std::string &fileContent, const std::filesystem::path &filePath) -> bool;
 };
 
 

@@ -48,13 +48,13 @@ auto FileManager::getFilesVector() -> std::vector<std::filesystem::path> {
 }
 
 auto FileManager::getFileLines(const std::filesystem::path &filePath) -> std::vector<std::string>{
-    auto out = std::fstream(filePath, std::fstream::in | std::fstream::app);
+    auto in = std::fstream(filePath, std::fstream::in | std::fstream::app);
     auto line = std::string();
     auto lines = std::vector<std::string>();
-    while (std::getline(out, line)) {
+    while (std::getline(in, line)) {
         if (!line.empty()) lines.emplace_back(line);
     }
-    out.close();
+    in.close();
     return lines;
 }
 
@@ -66,6 +66,9 @@ auto FileManager::getFileContents(const std::filesystem::path &filePath) -> std:
     return content;
 }
 
-auto FileManager::setFileContents(const std::string &fileContent) -> bool {
-    return false;
+auto FileManager::setFileContents(const std::string &fileContent, const std::filesystem::path &filePath) -> bool {
+    auto out = std::fstream(filePath, std::fstream::out);
+    if (!out)
+    out.close();
+    return true;
 }

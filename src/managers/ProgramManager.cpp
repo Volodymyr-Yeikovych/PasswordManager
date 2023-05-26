@@ -497,7 +497,7 @@ auto ProgramManager::executeAdd(const std::string &command) -> void {
 
     entryCat.addPassword(passwordToAdd);
     auto newFileContent = PasswordMapper::mapCategoryVecToText(categoriesVec);
-    fileManager.setFileContents(newFileContent);
+    fileManager.setFileContents(newFileContent, filePath);
 }
 
 auto ProgramManager::executeEditPassword(const std::string &command) -> void {

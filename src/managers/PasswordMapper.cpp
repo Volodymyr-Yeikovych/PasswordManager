@@ -55,7 +55,15 @@ auto PasswordMapper::mapTextToCategoryVec(const std::string &text) -> std::vecto
 }
 
 auto PasswordMapper::mapCategoryVecToText(const std::vector<Category> &categoryVec) -> std::string {
-    return {};
+    auto text = std::string();
+    for (auto const &cat : categoryVec) {
+        text.append(cat.getName() + " ").append("{\n");
+        for (auto const& psw : cat.getPasswordVec()) {
+            text.append(mapPasswordToString(psw)).append("\n");
+        }
+        text.append("}\n");
+    }
+    return text;
 }
 
 auto PasswordMapper::getPasswordFromSearchCommand(const std::vector<std::string> &commandParams) -> Password {
