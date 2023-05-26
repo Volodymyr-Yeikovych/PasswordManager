@@ -7,6 +7,7 @@
 #include "fmt/ranges.h"
 #include <regex>
 #include <random>
+#include <valarray>
 
 auto PasswordMapper::mapFileEntryToPassword(const std::string &line) -> Password {
     auto dDotVec = strSplitTrim(line, ":");
@@ -38,6 +39,7 @@ auto PasswordMapper::mapTextToCategoryVec(const std::string &text) -> std::vecto
         auto stringPasswords = PasswordMapper::strSplitTrim(rCurSplit[0], ";");
         auto passVec = std::vector<Password>();
         for (const auto &entry: stringPasswords) {
+            if (entry.empty()) continue;
             auto entrySplit = PasswordMapper::strSplitTrim(entry, ":");
             if (entrySplit.size() < 2 || entrySplit.size() > 4)
                 throw std::runtime_error("Error: invalid file format. Impossible to parse {2}.");
@@ -110,6 +112,34 @@ auto PasswordMapper::getPasswordFromAddCommand(const std::vector<std::string> &c
     return password;
 }
 
+auto PasswordMapper::getEditCommandPipeIndex(const std::vector<std::string> &commandParams) -> int {
+    auto delimIndex = int();
+    auto delim = "|";
+    for (int i = delimIndex; i < commandParams.size(); i++) {
+        if (delim == commandParams[i]) {
+            delimIndex = i;
+            return delimIndex;
+        }
+    }
+    return -1;
+}
+
+auto PasswordMapper::getSearchPasswordFromEditCommand(const std::vector<std::string> &commandParams) -> Password {
+    auto delimIndex = getEditCommandPipeIndex(commandParams);
+    if (delimIndex == -1) throw std::runtime_error("No pipe('|') was found in edit command. Invalid command.");
+
+    auto searchSubRange = std::vector(commandParams.begin(), commandParams.begin() + delimIndex);
+    return getPasswordFromSearchCommand(searchSubRange);
+}
+
+auto PasswordMapper::getEditPasswordFromEditCommand(const std::vector<std::string> &commandParams) -> Password {
+    auto delimIndex = getEditCommandPipeIndex(commandParams);
+    if (delimIndex == -1) throw std::runtime_error("No pipe('|') was found in edit command. Invalid command.");
+
+    auto editSubRange = std::vector(commandParams.begin() + delimIndex, commandParams.end());
+    return getPasswordFromSearchCommand(editSubRange);
+}
+
 auto PasswordMapper::getCategoryFromSearchCommand(const std::vector<std::string> &commandParams) -> Category {
     for (int i = 1; i < commandParams.size(); i += 2) {
         const auto &type = commandParams[i];
@@ -121,6 +151,22 @@ auto PasswordMapper::getCategoryFromSearchCommand(const std::vector<std::string>
 
 auto PasswordMapper::getCategoryFromAddCommand(const std::vector<std::string> &commandParams) -> Category {
     return Category(strSplitTrim(commandParams[2], ":")[2]);
+}
+
+auto PasswordMapper::getSearchCategoryFromEditCommand(const std::vector<std::string> &commandParams) -> Category {
+    auto delimIndex = getEditCommandPipeIndex(commandParams);
+    if (delimIndex == -1) throw std::runtime_error("No pipe('|') was found in edit command. Invalid command.");
+
+    auto searchSubRange = std::vector(commandParams.begin(), commandParams.begin() + delimIndex);
+    return getCategoryFromSearchCommand(searchSubRange);
+}
+
+auto PasswordMapper::getEditCategoryFromEditCommand(const std::vector<std::string> &commandParams) -> Category {
+    auto delimIndex = getEditCommandPipeIndex(commandParams);
+    if (delimIndex == -1) throw std::runtime_error("No pipe('|') was found in edit command. Invalid command.");
+
+    auto editSubRange = std::vector(commandParams.begin() + delimIndex, commandParams.end());
+    return getCategoryFromSearchCommand(editSubRange);
 }
 
 auto PasswordMapper::mapPasswordToString(const Password &password) -> std::string {
@@ -155,6 +201,17 @@ auto PasswordMapper::createPassword(int size, bool isUpper, bool isSpecial) -> s
     std::uniform_int_distribution<int> distribution(0, 35 + upperInc + specialInc);
     auto password = std::string();
     for (int i = 0; i < size; i++) password.append(randomPool[distribution(mt)]);
+}
+
+auto PasswordMapper::mapCategoryToString(const Category &category) -> std::string {
+    auto resultStr = std::string();
+    resultStr.append(category.getName()).append(" ");
+    resultStr.append("{\n");
+    for (auto &psw : category.getPasswordVec()) {
+        resultStr.append(PasswordMapper::mapPasswordToString(psw)).append("\n");
+    }
+    resultStr.append("}\n");
+    return resultStr;
 }
 
 auto PasswordMapper::strSplit(const std::string &string, const std::string &delim) -> std::vector<std::string> {

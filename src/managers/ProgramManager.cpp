@@ -239,7 +239,7 @@ auto ProgramManager::getStringVecFromAddCommands(const std::string &command) -> 
     paramsVec.emplace_back(leftSplit[0]);
     paramsVec.emplace_back(leftSplit[1].substr(1));
     paramsVec.emplace_back(rightSplit);
-    fmt::print("{} add\n", paramsVec); /// debug line <------------------------
+//    fmt::print("{} add\n", paramsVec); /// debug line <------------------------
     return paramsVec;
 }
 
@@ -301,11 +301,10 @@ auto ProgramManager::getStringVecFromEditCommand(const std::string &command) -> 
     }
     for (auto const &el: firstHalf) paramsVec.emplace_back(el);
     for (int i = 0; auto const &el: secondHalf) {
-//        if (i != 0)
         paramsVec.emplace_back(el);
         i++;
     }
-//    fmt::print("{} \n", paramsVec); /// debug line <------------------------
+//    fmt::print("{} edit\n", paramsVec); /// debug line <------------------------
     return paramsVec;
 }
 
@@ -438,6 +437,91 @@ auto ProgramManager::eraseNotMatching(const Category &searchCat,
     }
 }
 
+auto ProgramManager::editData(const Category &catToMatch, const Category &catToEdit,
+                              const Password &pswToMatch, const Password &pswToEdit,
+                              std::vector<Category> &saveData) -> void {
+    auto searchCatSelected = !catToMatch.getName().empty();
+    auto editCatSelected = !catToEdit.getName().empty();
+
+    auto containsEditCat = false;
+    auto editCatInd = int();
+    auto containsSearchCat = false;
+    auto searchCatInd = int();
+
+    auto diffCatMatching = std::map<int, std::vector<Password>>();
+    auto saveTransferCats = std::vector<Password>();
+    auto counter = 0;
+    for (auto &cat: saveData) {
+        if (!searchCatSelected) {
+            auto matchingVec = cat.getMatchingVec(pswToMatch);
+//            consoleManager.println("Before: " + PasswordMapper::mapCategoryToString(cat));
+            if (!editCatSelected) {
+                for (auto &psw: matchingVec) {
+                    consoleManager.println("Before: " + PasswordMapper::mapPasswordToString(psw));
+                    cat.removePassword(psw);
+                    psw.editMatching(pswToEdit);
+                    cat.addPassword(psw);
+                    consoleManager.println("After: " + PasswordMapper::mapPasswordToString(psw));
+                }
+            } else {
+                diffCatMatching.insert({counter, matchingVec});
+                if (cat.getName() == catToEdit.getName()) {
+                    containsEditCat = true;
+                    editCatInd = counter;
+                }
+            }
+//            consoleManager.println("After: " + PasswordMapper::mapCategoryToString(cat));
+        } else {
+            if (cat.getName() == catToMatch.getName()) {
+                saveTransferCats = cat.getMatchingVec(pswToMatch);
+                containsSearchCat = true;
+                searchCatInd = counter;
+            }
+            if (editCatSelected) {
+                if (cat.getName() == catToEdit.getName()) {
+                    containsEditCat = true;
+                    editCatInd = counter;
+                }
+            }
+        }
+        counter++;
+    }
+
+    if (searchCatSelected) {
+        if (!containsSearchCat) {
+            throw std::runtime_error(
+                    "Unable to edit: given search category doesn't yet exist. Try addcat command to add category.");
+        } else {
+            auto &cat = saveData[searchCatInd];
+            auto editIndex = editCatSelected ? editCatInd : searchCatInd;
+            for (auto &psw: saveTransferCats) {\
+                cat.removePassword(psw);
+                psw.editMatching(pswToEdit);
+                saveData[editIndex].addPassword(psw);
+            }
+        }
+    }
+
+    if (editCatSelected) {
+        if (!containsEditCat) {
+            throw std::runtime_error(
+                    "Unable to edit: given edit category doesn't yet exist. Try addcat command to add category.");
+        } else {
+            counter = 0;
+            if (diffCatMatching.empty()) return;
+            for (auto &cat: saveData) {
+                for (auto &psw: diffCatMatching[counter]) {
+                    cat.removePassword(psw);
+                    psw.editMatching(pswToEdit);
+                    saveData[editCatInd].addPassword(psw);
+                }
+                counter++;
+            }
+        }
+    }
+
+}
+
 auto ProgramManager::executeCommand(const std::string &command) -> void {
     if (isExitCommand(command)) return;
     try {
@@ -506,7 +590,19 @@ auto ProgramManager::executeAdd(const std::string &command) -> void {
 }
 
 auto ProgramManager::executeEditPassword(const std::string &command) -> void {
+    auto fileContent = fileManager.getFileContents(filePath);
+    auto categoriesVec = PasswordMapper::mapTextToCategoryVec(fileContent);
+    auto commandParams = getStringVecFromEditCommand(command);
 
+    auto searchEditPassword = PasswordMapper::getSearchPasswordFromEditCommand(commandParams);
+    auto editPassword = PasswordMapper::getEditPasswordFromEditCommand(commandParams);
+    auto searchEditCategory = PasswordMapper::getSearchCategoryFromEditCommand(commandParams);
+    auto editCategory = PasswordMapper::getEditCategoryFromEditCommand(commandParams);
+
+    editData(searchEditCategory, editCategory, searchEditPassword, editPassword, categoriesVec);
+
+    auto newFileContent = PasswordMapper::mapCategoryVecToText(categoriesVec);
+    fileManager.setFileContents(newFileContent, filePath);
 }
 
 auto ProgramManager::executeDeletePassword(const std::string &command) -> void {

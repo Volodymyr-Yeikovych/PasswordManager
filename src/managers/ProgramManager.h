@@ -90,6 +90,7 @@ public:
     auto isInvalidAddCommandLength(const std::vector<std::string> &params) -> bool;
 
     auto getStringVecFromAddDelCatCommands(const std::string &command) -> std::vector<std::string>;
+
     auto getStringVecFromAddCommands(const std::string &command) -> std::vector<std::string>;
 
     auto isInvalidAddDelCatCommandLength(const std::vector<std::string> &params) -> bool;
@@ -107,7 +108,11 @@ public:
     auto isInvalidEditCommandTypes(const std::vector<std::string> &params) -> bool;
 
     auto isInvalidSEDParamType(const std::string &paramType) -> bool;
+
     auto eraseNotMatching(const Category &searchCat, std::map<Category, std::vector<Password>> &matchingPsw) -> void;
+
+    auto editData(const Category &catToMatch, const Category &catToEdit, const Password &pswToMatch,
+                  const Password &pswToEdit, std::vector<Category> &saveData) -> void;
 };
 
 

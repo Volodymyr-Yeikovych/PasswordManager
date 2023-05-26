@@ -30,4 +30,5 @@ public:
     auto getLogin() const -> std::string;
     auto getName() const -> std::string;
     auto getPassword() const -> std::string;
+    auto editMatching(const Password &password) -> void;
 };

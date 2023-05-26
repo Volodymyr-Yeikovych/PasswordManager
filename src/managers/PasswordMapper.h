@@ -21,9 +21,13 @@ public:
     auto mapFileEntryToPassword(const std::string &line) -> Password;
     auto static getPasswordFromSearchCommand(const std::vector<std::string> &commandParams) -> Password;
     auto static getPasswordFromAddCommand(const std::vector<std::string> &commandParams) -> Password;
+    auto static getSearchPasswordFromEditCommand(const std::vector<std::string> &commandParams) -> Password;
+    auto static getEditPasswordFromEditCommand(const std::vector<std::string> &commandParams) -> Password;
     auto mapPasswordToFileEntry(const Password &entry) -> std::string;
     auto static getCategoryFromSearchCommand(const std::vector<std::string> &commandParams) -> Category;
     auto static getCategoryFromAddCommand(const std::vector<std::string> &commandParams) -> Category;
+    auto static getSearchCategoryFromEditCommand(const std::vector<std::string> &commandParams) -> Category;
+    auto static getEditCategoryFromEditCommand(const std::vector<std::string> &commandParams) -> Category;
     auto static mapPasswordToString(const Password &password) -> std::string;
     auto static mapCategoryToString(const Category &category) -> std::string;
     auto static mapStringToCategory(const std::string &stack) -> Category;
@@ -44,6 +48,7 @@ public:
 private:
     auto static generatePassword(const std::string &params) -> std::string;
     auto static createPassword(int size, bool isUpper, bool isSpecial) -> std::string;
+    auto static getEditCommandPipeIndex(const std::vector<std::string> &commandParams) -> int;
 };
 
 

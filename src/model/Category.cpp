@@ -3,7 +3,6 @@
 //
 
 #include <algorithm>
-#include <tuple>
 #include "Category.h"
 
 Category::Category(const std::string &name) {

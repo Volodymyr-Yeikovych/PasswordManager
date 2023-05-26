@@ -51,3 +51,15 @@ auto Password::getLogin() const -> std::string {
 auto Password::getWebsite() const -> std::string {
     return website;
 }
+
+auto Password::editMatching(const Password &password) -> void {
+    auto nameMatches = !password.name.empty();
+    auto passwordMatches = !password.password.empty();
+    auto websiteMatches = !password.website.empty();
+    auto loginMatches = !password.login.empty();
+
+    if (nameMatches) this->name = password.name;
+    if (passwordMatches) this->password = password.password;
+    if (websiteMatches) this->website = password.website;
+    if (loginMatches) this->login = password.login;
+}
