@@ -59,7 +59,7 @@ auto PasswordMapper::mapCategoryVecToText(const std::vector<Category> &categoryV
     for (auto const &cat : categoryVec) {
         text.append(cat.getName() + " ").append("{\n");
         for (auto const& psw : cat.getPasswordVec()) {
-            text.append(mapPasswordToString(psw)).append("\n");
+            text.append("\t").append(mapPasswordToString(psw)).append("\n");
         }
         text.append("}\n");
     }
@@ -101,8 +101,8 @@ auto PasswordMapper::getPasswordFromAddCommand(const std::vector<std::string> &c
     auto strPass = paramsVec[1];
     auto website = std::string();
     auto login = std::string();
-    if (paramsVec.size() > 3) website[3];
-    if (paramsVec.size() > 4) login[4];
+    if (paramsVec.size() > 3) website = paramsVec[3];
+    if (paramsVec.size() > 4) login = paramsVec[4];
     if (isGeneratedPassword) strPass = generatePassword(strPass);
     auto password = Password(name, strPass);
     password.setWebsite(website);

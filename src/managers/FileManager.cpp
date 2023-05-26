@@ -67,8 +67,10 @@ auto FileManager::getFileContents(const std::filesystem::path &filePath) -> std:
 }
 
 auto FileManager::setFileContents(const std::string &fileContent, const std::filesystem::path &filePath) -> bool {
-    auto out = std::fstream(filePath, std::fstream::out);
-    if (!out)
+    auto out = std::ofstream(filePath);
+    if (out) {
+        out << fileContent;
+    }
     out.close();
     return true;
 }

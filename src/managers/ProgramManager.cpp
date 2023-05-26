@@ -160,7 +160,7 @@ auto ProgramManager::isInvalidSEDParamType(const std::string &paramType) -> bool
 
 auto ProgramManager::isInvalidSEDCommandTypes(const std::vector<std::string> &params) -> bool {
     for (int i = 1; i < params.size(); i += 2) {
-        if(isInvalidSEDParamType(params[i])) return true;
+        if (isInvalidSEDParamType(params[i])) return true;
     }
     return false;
 }
@@ -211,19 +211,21 @@ auto ProgramManager::isInvalidAddCommandTypes(const std::vector<std::string> &pa
     if (params[1] != "c" && params[1] != "g") return true;
     auto valuesVec = PasswordMapper::strSplitTrim(params[2], ":");
     if (valuesVec.size() < 3 || valuesVec.size() > 5) return true;
-    auto paramsVec = PasswordMapper::strSplitTrim(valuesVec[1], "-");
-    if (paramsVec.size() < 3 || paramsVec.size() > 4) return true;
-    for (const auto &param : paramsVec) {
-        if (!param.empty() && param != "u" && param != "U" && param != "s" && param != "S") {
-            try {
-                auto intVal = std::stoi(param);
-                continue;
-            } catch (std::invalid_argument &e) {
-                return true;
+    if (params[1] == "g") {
+        auto paramsVec = PasswordMapper::strSplitTrim(valuesVec[1], "-");
+        if (paramsVec.size() < 3 || paramsVec.size() > 4) return true;
+        for (const auto &param: paramsVec) {
+            if (!param.empty() && param != "u" && param != "U" && param != "s" && param != "S") {
+                try {
+                    auto intVal = std::stoi(param);
+                    continue;
+                } catch (std::invalid_argument &e) {
+                    return true;
+                }
             }
+            if (param.empty() || param == "u" || param == "U" || param == "s" || param == "S") continue;
+            return true;
         }
-        if (param.empty() || param == "u" || param == "U" || param == "s" || param == "S") continue;
-        return true;
     }
     return false;
 }
@@ -318,7 +320,7 @@ auto ProgramManager::isInvalidAddDelCatCommandLength(const std::vector<std::stri
 auto ProgramManager::isInvalidEditCommandTypes(const std::vector<std::string> &params) -> bool {
     auto pipeCount = 0;
     auto keyWordCount = 0;
-    for (int i = 0; auto const &el : params) {
+    for (int i = 0; auto const &el: params) {
         if (el == "edit") {
             if (keyWordCount == 0) {
                 keyWordCount++;
@@ -429,8 +431,9 @@ auto ProgramManager::isHelpCommand(const std::string &command) -> bool {
     return command == "help";
 }
 
-auto ProgramManager::eraseNotMatching(const Category &searchCat, std::map<Category, std::vector<Password>> &matchingPsw) -> void{
-    for (const auto &entry : matchingPsw) {
+auto ProgramManager::eraseNotMatching(const Category &searchCat,
+                                      std::map<Category, std::vector<Password>> &matchingPsw) -> void {
+    for (const auto &entry: matchingPsw) {
         if (entry.first != searchCat) matchingPsw.erase(entry.first);
     }
 }
@@ -460,7 +463,7 @@ auto ProgramManager::executeSearch(const std::string &command) -> void {
     auto specificCat = PasswordMapper::getCategoryFromSearchCommand(commandParams);
 
     auto entryMap = std::map<Category, std::vector<Password>>();
-    for (auto existingCats : categoriesVec) {
+    for (auto existingCats: categoriesVec) {
         auto matches = existingCats.getMatchingVec(searchPsw);
         if (!matches.empty()) entryMap[existingCats] = matches;
     }
@@ -485,17 +488,19 @@ auto ProgramManager::executeAdd(const std::string &command) -> void {
     auto entryCat = PasswordMapper::getCategoryFromAddCommand(commandParams);
 
     auto contains = false;
-    for (auto const &cat : categoriesVec) {
+    auto catInd = 0;
+    for (auto const &cat: categoriesVec) {
         if (cat.getName() == entryCat.getName()) {
             contains = true;
-            entryCat = cat;
             break;
         }
+        catInd++;
     }
     if (!contains)
-        throw std::invalid_argument("Trying to add password in non-existent category. Try command -> addcat " + entryCat.getName());
+        throw std::invalid_argument(
+                "Trying to add password in non-existent category. Try command -> addcat " + entryCat.getName());
 
-    entryCat.addPassword(passwordToAdd);
+    categoriesVec[catInd].addPassword(passwordToAdd);
     auto newFileContent = PasswordMapper::mapCategoryVecToText(categoriesVec);
     fileManager.setFileContents(newFileContent, filePath);
 }
