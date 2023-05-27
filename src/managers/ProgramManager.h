@@ -19,6 +19,8 @@ class ProgramManager {
     const std::vector<std::string> SEARCH_EDIT_DELETE_PARAMS_TYPES = {"a", "n", "pw", "c", "w", "l"};
     const std::vector<std::string> SORT_PARAMS_TYPES = {"n", "pw", "c", "w", "l"};
     const std::vector<std::string> SORT_PARAMS_ORDER_TYPES = {"len", "abc", "desc", "asc"};
+    const std::string DEFAULT_SORT_ORDER_FIRST_PARAM = "len";
+    const std::string DEFAULT_SORT_ORDER_SECOND_PARAM = "asc";
 public:
     explicit ProgramManager(const FileManager &fileManager, const ConsoleManager &consoleManager,
                             const CryptographyManager &cryptographyManager, const PasswordMapper &mapper);
@@ -113,6 +115,17 @@ public:
 
     auto editData(const Category &catToMatch, const Category &catToEdit, const Password &pswToMatch,
                   const Password &pswToEdit, std::vector<Category> &saveData) -> void;
+
+    auto catExists(const Category &catToAdd, const std::vector<Category> &fileData) -> bool;
+
+    auto getNameMatchingCatIterator(const Category &catToAdd,
+                                    const std::vector<Category> &fileData) -> std::vector<Category>::const_iterator;
+    auto deleteMatching(const Password &pswToMatch, const Category &catToMatch, std::vector<Category> &fileData) -> void;
+    auto sortData(const std::vector<std::string> &sortVec, std::vector<Category> &fileData) -> void;
+    auto getSortVecFromSortCommand(const std::vector<std::string> &commandParams) -> std::vector<std::string>;
+    auto isSortParam(const std::string &param) -> bool;
+    auto isSortSubParam(const std::string &subParam) -> bool;
+    auto isValidSortVec(const std::vector<std::string> &sortVec) -> bool;
 };
 
 

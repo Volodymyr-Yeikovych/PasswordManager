@@ -140,6 +140,10 @@ auto PasswordMapper::getEditPasswordFromEditCommand(const std::vector<std::strin
     return getPasswordFromSearchCommand(editSubRange);
 }
 
+auto PasswordMapper::getPasswordFromDeleteCommand(const std::vector<std::string> &commandParams) -> Password {
+    return getPasswordFromSearchCommand(commandParams);
+}
+
 auto PasswordMapper::getCategoryFromSearchCommand(const std::vector<std::string> &commandParams) -> Category {
     for (int i = 1; i < commandParams.size(); i += 2) {
         const auto &type = commandParams[i];
@@ -169,6 +173,15 @@ auto PasswordMapper::getEditCategoryFromEditCommand(const std::vector<std::strin
     return getCategoryFromSearchCommand(editSubRange);
 }
 
+auto PasswordMapper::getCategoryFromAddDelCatCommand(const std::vector<std::string> &commandParam) -> Category {
+    if (commandParam.size() < 2) return {};
+    return Category(commandParam[1]);
+}
+
+auto PasswordMapper::getCategoryFromDeleteCommand(const std::vector<std::string> &commandParam) -> Category {
+    return getCategoryFromSearchCommand(commandParam);
+}
+
 auto PasswordMapper::mapPasswordToString(const Password &password) -> std::string {
     return std::string(password.getName() + ":" + password.getPassword() + ":" + password.getWebsite() + ":" +
                        password.getLogin() + ";");
@@ -185,7 +198,9 @@ auto PasswordMapper::generatePassword(const std::string &params) -> std::string 
         if (param == "s") isSpecial = false;
         if (param == "S") isSpecial = true;
         try {
-            size = std::stoi(param);
+            if (isNumerical(param)) {
+                size = std::stoi(param);
+            }
         } catch (std::invalid_argument &e) {
             continue;
         }
@@ -201,6 +216,7 @@ auto PasswordMapper::createPassword(int size, bool isUpper, bool isSpecial) -> s
     std::uniform_int_distribution<int> distribution(0, 35 + upperInc + specialInc);
     auto password = std::string();
     for (int i = 0; i < size; i++) password.append(randomPool[distribution(mt)]);
+    return password;
 }
 
 auto PasswordMapper::mapCategoryToString(const Category &category) -> std::string {
@@ -242,4 +258,10 @@ auto PasswordMapper::rightTrim(std::string &s) -> void {
 auto PasswordMapper::trim(std::string &s) -> void {
     rightTrim(s);
     leftTrim(s);
+}
+
+auto PasswordMapper::isNumerical(const std::string &str) -> bool {
+    auto begIt = str.begin();
+    while (begIt != str.end() && std::isdigit(*begIt)) begIt++;
+    return !str.empty() && begIt == str.end();
 }

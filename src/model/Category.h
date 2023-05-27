@@ -28,6 +28,8 @@ class Category {
         auto getMatchingVec(const Password &password) -> std::vector<Password>;
         auto getName() const -> std::string;
         auto getPasswordVec() const -> std::vector<Password>;
+        auto sortByLength(const std::string &field, const std::string &order) -> void;
+        auto sortAlphabetically(const std::string &field, const std::string &order) -> void;
 };
 
 

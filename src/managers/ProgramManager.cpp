@@ -3,13 +3,11 @@
 //
 
 #include <algorithm>
-#include <cstring>
 #include <regex>
 #include <set>
 #include "ProgramManager.h"
 #include "fmt/core.h"
 #include "fmt/ranges.h"
-#include "../model/Category.h"
 
 auto ProgramManager::operator=(const ProgramManager &other) -> ProgramManager {
     this->fileManager = other.fileManager;
@@ -232,6 +230,7 @@ auto ProgramManager::isInvalidAddCommandTypes(const std::vector<std::string> &pa
 
 auto ProgramManager::getStringVecFromAddCommands(const std::string &command) -> std::vector<std::string> {
     auto quoteVec = PasswordMapper::strSplitTrim(command, "\"");
+    if (quoteVec.size() < 2) return {};
     auto leftSplit = PasswordMapper::strSplitTrim(quoteVec[0], "\\s");
     auto rightSplit = quoteVec[1];
 
@@ -282,7 +281,7 @@ auto ProgramManager::getStringVecFromSortCommand(const std::string &command) -> 
         }
         i++;
     }
-//    fmt::print("{} \n", paramsVec); /// debug line <------------------------
+//    fmt::print("{} sort\n", paramsVec); /// debug line <------------------------
     return paramsVec;
 }
 
@@ -454,7 +453,6 @@ auto ProgramManager::editData(const Category &catToMatch, const Category &catToE
     for (auto &cat: saveData) {
         if (!searchCatSelected) {
             auto matchingVec = cat.getMatchingVec(pswToMatch);
-//            consoleManager.println("Before: " + PasswordMapper::mapCategoryToString(cat));
             if (!editCatSelected) {
                 for (auto &psw: matchingVec) {
                     consoleManager.println("Before: " + PasswordMapper::mapPasswordToString(psw));
@@ -470,7 +468,6 @@ auto ProgramManager::editData(const Category &catToMatch, const Category &catToE
                     editCatInd = counter;
                 }
             }
-//            consoleManager.println("After: " + PasswordMapper::mapCategoryToString(cat));
         } else {
             if (cat.getName() == catToMatch.getName()) {
                 saveTransferCats = cat.getMatchingVec(pswToMatch);
@@ -494,7 +491,8 @@ auto ProgramManager::editData(const Category &catToMatch, const Category &catToE
         } else {
             auto &cat = saveData[searchCatInd];
             auto editIndex = editCatSelected ? editCatInd : searchCatInd;
-            for (auto &psw: saveTransferCats) {\
+            for (auto &psw: saveTransferCats) {
+                \
                 cat.removePassword(psw);
                 psw.editMatching(pswToEdit);
                 saveData[editIndex].addPassword(psw);
@@ -517,6 +515,141 @@ auto ProgramManager::editData(const Category &catToMatch, const Category &catToE
                 }
                 counter++;
             }
+        }
+    }
+}
+
+auto ProgramManager::catExists(const Category &catToAdd, const std::vector<Category> &fileData) -> bool {
+    auto exists = bool(false);
+    for (const auto &cat: fileData) {
+        if (!catToAdd.getName().empty() && cat.getName() == catToAdd.getName()) {
+            exists = true;
+            break;
+        }
+    }
+    return exists;
+}
+
+auto ProgramManager::getNameMatchingCatIterator(const Category &catToAdd,
+                                                const std::vector<Category> &fileData) -> std::vector<Category>::const_iterator {
+    auto it = fileData.begin();
+    for (const auto &cat: fileData) {
+        if (cat.getName() == catToAdd.getName()) break;
+        it++;
+    }
+    return it;
+}
+
+auto ProgramManager::deleteMatching(const Password &pswToMatch, const Category &catToMatch,
+                                    std::vector<Category> &fileData) -> void {
+    auto hasCatToMatch = !catToMatch.getName().empty();
+
+    auto toDelete = std::map<int, std::vector<Password>>();
+    for (int counter = 0; auto &cat: fileData) {
+        if (!hasCatToMatch) {
+            toDelete.insert({counter, cat.getMatchingVec(pswToMatch)});
+        } else {
+            if (cat.getName() == catToMatch.getName()) {
+                toDelete.insert({counter, cat.getMatchingVec(pswToMatch)});
+            }
+        }
+        counter++;
+    }
+
+    for (const auto &pair: toDelete) {
+        for (auto &toErase: pair.second) fileData[pair.first].removePassword(toErase);
+    }
+}
+
+auto ProgramManager::isSortParam(const std::string &param) -> bool {
+    for (const auto &constParam: SORT_PARAMS_TYPES) {
+        if (constParam == param) return true;
+    }
+    return false;
+}
+
+auto ProgramManager::isSortSubParam(const std::string &subParam) -> bool {
+    for (const auto &constParam: SORT_PARAMS_ORDER_TYPES) {
+        if (constParam == subParam) return true;
+    }
+    return false;
+}
+
+auto
+ProgramManager::getSortVecFromSortCommand(const std::vector<std::string> &commandParams) -> std::vector<std::string> {
+    auto sortVec = std::vector<std::string>();
+    for (int i = 1; i < commandParams.size(); i++) {
+        auto nextIsEmpty = (i + 1) == commandParams.size();
+        const auto &cur = commandParams[i];
+        const auto &next = !nextIsEmpty ? commandParams[i + 1] : cur;
+        if (isSortParam(cur)) {
+            sortVec.emplace_back(cur);
+            if (isSortParam(next)) {
+                sortVec.emplace_back(DEFAULT_SORT_ORDER_FIRST_PARAM);
+                sortVec.emplace_back(DEFAULT_SORT_ORDER_SECOND_PARAM);
+            }
+        }
+        if (isSortSubParam(cur)) {
+            sortVec.emplace_back(cur);
+            const auto &prev = commandParams[i - 1];
+            if (isSortParam(prev)) {
+                if (isSortParam(next) || nextIsEmpty) {
+                    sortVec.emplace_back(DEFAULT_SORT_ORDER_SECOND_PARAM);
+                }
+            }
+        }
+    }
+    return sortVec;
+}
+
+auto ProgramManager::isValidSortVec(const std::vector<std::string> &sortVec) -> bool {
+    if (sortVec.size() % 3 != 0) return false;
+    for (int i = 0; i < sortVec.size(); i += 3) {
+        const auto &cur = sortVec[i];
+        const auto &firstSub = sortVec[i + 1];
+        const auto &secondSub = sortVec[i + 2];
+        if (!isSortParam(cur)) return false;
+        if (firstSub != "abc" && firstSub != "len") return false;
+        if (secondSub != "desc" && secondSub != "asc") return false;
+    }
+    return true;
+}
+
+auto ProgramManager::sortData(const std::vector<std::string> &sortVec, std::vector<Category> &fileData) -> void {
+    for (int i = 0; i < sortVec.size(); i += 3) {
+        const auto &sortParam = sortVec[i];
+        const auto &firstSub = sortVec[i + 1];
+        const auto &secondSub = sortVec[i + 2];
+        for (auto &cat: fileData) {
+            if (sortParam == "c") {
+                if (firstSub == "len") {
+                    if (secondSub == "asc") {
+                        std::ranges::sort(fileData, [](Category &cat1, Category &cat2) -> int {
+                            return cat1.getName().size() < cat2.getName().size();
+                        });
+                    }
+                    if (secondSub == "desc") {
+                        std::ranges::sort(fileData, [](Category &cat1, Category &cat2) -> int {
+                            return cat1.getName().size() > cat2.getName().size();
+                        });
+                    }
+                }
+                if (firstSub == "abc") {
+                    if (secondSub == "asc") {
+                        std::ranges::sort(fileData, [](Category &cat1, Category &cat2) -> int {
+                            return cat1.getName() < cat2.getName();
+                        });
+                    }
+                    if (secondSub == "desc") {
+                        std::ranges::sort(fileData, [](Category &cat1, Category &cat2) -> int {
+                            return cat1.getName() > cat2.getName();
+                        });
+                    }
+                }
+                break;
+            }
+            if (firstSub == "len") cat.sortByLength(sortParam, secondSub);
+            if (firstSub == "abc") cat.sortAlphabetically(sortParam, secondSub);
         }
     }
 
@@ -560,20 +693,34 @@ auto ProgramManager::executeSearch(const std::string &command) -> void {
 }
 
 auto ProgramManager::executeSort(const std::string &command) -> void {
+    auto fileContent = fileManager.getFileContents(filePath);
+    auto categoriesVec = PasswordMapper::mapTextToCategoryVec(fileContent);
+    auto commandParams = getStringVecFromSortCommand(command);
 
+    auto sortVec = getSortVecFromSortCommand(commandParams);
+    fmt::println("{} sv\n", sortVec);
+
+    if (!isValidSortVec(sortVec)) {
+        consoleManager.println("Error: Invalid sorting order. First param(%1) should be before second(%2) !!!");
+        return;
+    }
+    sortData(sortVec, categoriesVec);
+
+    auto newFileContent = PasswordMapper::mapCategoryVecToText(categoriesVec);
+    fileManager.setFileContents(newFileContent, filePath);
 }
 
 auto ProgramManager::executeAdd(const std::string &command) -> void {
     auto fileContent = fileManager.getFileContents(filePath);
     auto categoriesVec = PasswordMapper::mapTextToCategoryVec(fileContent);
-    auto commandParams = getStringVecFromSearchDeleteCommands(command);
+    auto commandParams = getStringVecFromAddCommands(command);
 
     auto passwordToAdd = PasswordMapper::getPasswordFromAddCommand(commandParams);
     auto entryCat = PasswordMapper::getCategoryFromAddCommand(commandParams);
 
     auto contains = false;
     auto catInd = 0;
-    for (auto const &cat: categoriesVec) {
+    for (const auto &cat: categoriesVec) {
         if (cat.getName() == entryCat.getName()) {
             contains = true;
             break;
@@ -606,15 +753,64 @@ auto ProgramManager::executeEditPassword(const std::string &command) -> void {
 }
 
 auto ProgramManager::executeDeletePassword(const std::string &command) -> void {
+    auto fileContent = fileManager.getFileContents(filePath);
+    auto categoriesVec = PasswordMapper::mapTextToCategoryVec(fileContent);
+    auto commandParams = getStringVecFromSearchDeleteCommands(command);
 
+    auto deletePassword = PasswordMapper::getPasswordFromDeleteCommand(commandParams);
+    auto deleteCat = PasswordMapper::getCategoryFromDeleteCommand(commandParams);
+
+    deleteMatching(deletePassword, deleteCat, categoriesVec);
+
+    auto newFileContent = PasswordMapper::mapCategoryVecToText(categoriesVec);
+    fileManager.setFileContents(newFileContent, filePath);
 }
 
 auto ProgramManager::executeAddCategory(const std::string &command) -> void {
+    auto fileContent = fileManager.getFileContents(filePath);
+    auto categoriesVec = PasswordMapper::mapTextToCategoryVec(fileContent);
+    auto commandParams = getStringVecFromAddDelCatCommands(command);
+
+    auto catToAdd = PasswordMapper::getCategoryFromAddDelCatCommand(commandParams);
+
+    if (catToAdd.getName().empty()) {
+        consoleManager.println("Error: You didn't specify category name, unable to add category.");
+        return;
+    }
+
+    auto exists = catExists(catToAdd, categoriesVec);
+    if (!exists) {
+        categoriesVec.emplace_back(catToAdd);
+        auto newFileContent = PasswordMapper::mapCategoryVecToText(categoriesVec);
+        fileManager.setFileContents(newFileContent, filePath);
+    } else {
+        consoleManager.println
+                ("Error: category you are trying to add already exists. Try using different cat name.");
+    }
 
 }
 
 auto ProgramManager::executeDeleteCategory(const std::string &command) -> void {
+    auto fileContent = fileManager.getFileContents(filePath);
+    auto categoriesVec = PasswordMapper::mapTextToCategoryVec(fileContent);
+    auto commandParams = getStringVecFromAddDelCatCommands(command);
 
+    auto catToDelete = PasswordMapper::getCategoryFromAddDelCatCommand(commandParams);
+
+    auto exists = catExists(catToDelete, categoriesVec);
+
+    if (exists) {
+        auto elToErase = getNameMatchingCatIterator(catToDelete, categoriesVec);
+        if (elToErase == categoriesVec.end()) {
+            consoleManager.println("Error: can't find category to erase, even though before it existed.");
+            return;
+        } else categoriesVec.erase(elToErase);
+    } else {
+        categoriesVec.clear();
+    }
+
+    auto newFileContent = PasswordMapper::mapCategoryVecToText(categoriesVec);
+    fileManager.setFileContents(newFileContent, filePath);
 }
 
 auto ProgramManager::listCommands() -> void {
@@ -652,6 +848,10 @@ auto ProgramManager::listCommands() -> void {
     consoleManager.println("desc - sort in descending order");
     consoleManager.println("asc - sort in ascending order (default)");
     consoleManager.println("If no %1 or %2 will be provided, default sorting type will be chosen");
+    consoleManager.println("You can omit both(%1 and %2) or only %2");
+    consoleManager.println("Something like that: sort -pw asc  <-- won't work");
+    consoleManager.println("sort -pw  <-- correct");
+    consoleManager.println("sort -pw abc  <-- correct");
     consoleManager.println(R"(Example: sort -n len asc)");
     consoleManager.println("Sort by name in ascending order, the same as:");
     consoleManager.println(R"(sort -n len)");
@@ -660,7 +860,7 @@ auto ProgramManager::listCommands() -> void {
     consoleManager.println("Thus the following is equal to aforementioned:");
     consoleManager.println(R"(sort -n)");
     consoleManager.println("You can specify more params, provided that they are distinct:");
-    consoleManager.println(R"(sort -n abc -c desc)");
+    consoleManager.println(R"(sort -n abc -c len)");
     consoleManager.println("------------------------------------------------");
     consoleManager.println("add -p \"%\"");
     consoleManager.println("instead of -p u need to choose the following parameters:");
