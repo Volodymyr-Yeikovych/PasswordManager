@@ -29,7 +29,7 @@ auto FileManager::countFilesDir(std::string const& dir) -> int {
     return fCount;
 }
 
-auto FileManager::operator=(const FileManager &other) -> FileManager {
+auto FileManager::operator=(const FileManager &other) -> FileManager& {
     return *this;
 }
 

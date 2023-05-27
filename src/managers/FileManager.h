@@ -18,7 +18,7 @@ public:
 
     FileManager();
 
-    auto operator=(FileManager const &fileManager) -> FileManager;
+    auto operator=(FileManager const &fileManager) -> FileManager&;
 
     auto countFilesInDefDir() -> int;
 

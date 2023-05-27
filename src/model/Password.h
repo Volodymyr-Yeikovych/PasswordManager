@@ -17,7 +17,6 @@ class Password{
     std::string login;
 
 public:
-//    auto operator==(const Password &password) -> bool;
     bool operator==(const Password &password) const = default;
     bool operator<=>(const Password &password) const = default;
     Password(const std::string& name, const std::string& passText);

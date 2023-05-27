@@ -37,7 +37,7 @@ auto Category::removePassword(const Password &password) -> bool {
 }
 
 auto Category::getName() const -> std::string {
-    return this->name;
+    return name;
 }
 
 auto Category::getMatchingVec(const Password &password) -> std::vector<Password> {

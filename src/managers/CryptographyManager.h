@@ -5,6 +5,7 @@
 
 #include <filesystem>
 #include <vector>
+#include "FileManager.h"
 
 #ifndef PJC_PROJECT_PASSWORDMANAGER_CRYPTOGRAPHYMANAGER_H
 #define PJC_PROJECT_PASSWORDMANAGER_CRYPTOGRAPHYMANAGER_H
@@ -12,8 +13,11 @@
 #endif //PJC_PROJECT_PASSWORDMANAGER_CRYPTOGRAPHYMANAGER_H
 
 class CryptographyManager {
+    FileManager fileManager;
 
     public:
-        auto encrypt(std::filesystem::path file, std::string encPass) -> void;
-        auto decrypt(std::filesystem::path file, std::string decPass) -> void;
+        CryptographyManager(const FileManager &fileManager);
+        auto encrypt(std::filesystem::path path, std::string encPass) -> void;
+        auto decrypt(std::filesystem::path path, std::string decPass) -> void;
+        auto getPasswordSequence(const std::string &encPsw) -> int;
 };

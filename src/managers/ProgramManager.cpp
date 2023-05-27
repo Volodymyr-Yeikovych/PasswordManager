@@ -9,7 +9,7 @@
 #include "fmt/core.h"
 #include "fmt/ranges.h"
 
-auto ProgramManager::operator=(const ProgramManager &other) -> ProgramManager {
+auto ProgramManager::operator=(const ProgramManager &other) -> ProgramManager& {
     this->fileManager = other.fileManager;
     this->consoleManager = other.consoleManager;
     this->cryptographyManager = other.cryptographyManager;
@@ -41,51 +41,28 @@ auto ProgramManager::start() -> void {
         filePath = std::filesystem::path(consoleManager.readString());
     } else filePath = pathVector.at(input - 1);
     consoleManager.println(filePath.string());
-    consoleManager.print("Choose whether to decrypt/encrypt (type enc/dec): ");
-    auto startMode = consoleManager.readString();
-    while (!isValidStartMode(startMode)) {
-        consoleManager.println(startMode);
-        consoleManager.print("Invalid start mode (type enc/dec): ");
-        startMode = consoleManager.readString();
-    }
     consoleManager.print("Provide your password: ");
     auto userPassword = consoleManager.readString();
-    if (isEncryption(startMode)) {
-        cryptographyManager.encrypt(filePath, userPassword);
-    } else {
-        cryptographyManager.decrypt(filePath, userPassword);
-        auto decryptedFile = fileManager.getFileLines(filePath);
-        consoleManager.println("Write help to list available commands.");
-        auto command = std::string();
-        while (!isExitCommand(command)) {
-            consoleManager.print("Enter your command: ");
-            command = consoleManager.readString();
-            if (isNotCommand(command)) {
-                consoleManager.println("Invalid syntax or command doesnt exist.");
-                consoleManager.println("Use help to list available commands.");
-                continue;
-            } else executeCommand(command);
-        }
-        cryptographyManager.encrypt(filePath, userPassword);
+    cryptographyManager.encrypt(filePath, userPassword);
+//    cryptographyManager.decrypt(filePath, userPassword);
+    auto decryptedFile = fileManager.getFileLines(filePath);
+    consoleManager.println("Write help to list available commands.");
+    auto command = std::string();
+    while (!isExitCommand(command)) {
+        consoleManager.print("Enter your command: ");
+        command = consoleManager.readString();
+        if (isNotCommand(command)) {
+            consoleManager.println("Invalid syntax or command doesnt exist.");
+            consoleManager.println("Use help to list available commands.");
+            continue;
+        } else executeCommand(command);
     }
+//    cryptographyManager.encrypt(filePath, userPassword);
 }
 
 auto ProgramManager::inputOutOfBounds(const int &input, const unsigned long long int &poolSize) -> bool {
     if (input <= 0 || input > poolSize) return true;
     return false;
-}
-
-auto ProgramManager::isValidStartMode(std::string basicString) -> bool {
-    std::ranges::transform(basicString, basicString.begin(), [](char c) { return std::tolower(c); });
-    return isEncryption(basicString) || isDecryption(basicString);
-}
-
-auto ProgramManager::isEncryption(const std::string &basicString) -> bool {
-    return basicString == "enc";
-}
-
-auto ProgramManager::isDecryption(const std::string &basicString) -> bool {
-    return basicString == "dec";
 }
 
 auto ProgramManager::isExitCommand(const std::string &command) -> bool {
@@ -98,13 +75,8 @@ auto ProgramManager::isNotCommand(const std::string &command) -> bool {
            && !isDeletePasswordCommand(command) && !isAddCategoryCommand(command) && !isDeleteCategoryCommand(command);
 }
 
-auto ProgramManager::exit(int errCode) -> void {
-    std::exit(errCode);
-}
-
 auto ProgramManager::isEmptyCommand(const std::vector<std::string> &params) -> bool {
     if (params.empty()) {
-//        consoleManager.println("Error: Invalid syntax. Use 'help' for manual.");
         return true;
     }
     return false;
@@ -130,7 +102,6 @@ auto ProgramManager::isInvalidAddCommandLength(const std::vector<std::string> &p
 auto ProgramManager::isInvalidCommandKeyword(const std::vector<std::string> &params,
                                              const std::string &commandKeyword) -> bool {
     if (params[0] != commandKeyword) {
-//        consoleManager.println("Error: Command {" + params[0] + "} is not recognised as internal command.");
         return true;
     }
     return false;
@@ -248,13 +219,10 @@ auto ProgramManager::getStringVecFromSearchDeleteCommands(const std::string &com
     paramsVec.emplace_back(dashVec[0]);
     for (int i = 1; i < dashVec.size(); i++) {
         if (!dashVec[i].ends_with('"')) {
-//            consoleManager.println("Error: missing closing quotes(\").");
             return {};
         }
         auto quoteVec = PasswordMapper::strSplitTrim(dashVec[i], "\"");
         if (quoteVec.size() != 2) {
-//            consoleManager.println("Error: Invalid number of quotes(\") expected {2}, found {"
-//                                   + std::to_string(quoteVec.size()) + "}");
             return {};
         }
         paramsVec.emplace_back(quoteVec[0]);

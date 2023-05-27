@@ -27,15 +27,9 @@ public:
 
     auto start() -> void;
 
-    auto operator=(ProgramManager const &programManager) -> ProgramManager;
+    auto operator=(ProgramManager const &programManager) -> ProgramManager&;
 
     auto inputOutOfBounds(const int &input, const unsigned long long int &poolSize) -> bool;
-
-    auto isValidStartMode(std::string basicString) -> bool;
-
-    auto isEncryption(const std::string &basicString) -> bool;
-
-    auto isDecryption(const std::string &basicString) -> bool;
 
     auto isExitCommand(const std::string &command) -> bool;
 
@@ -76,8 +70,6 @@ public:
     auto executeDeleteCategory(const std::string &command) -> void;
 
     auto getStringVecFromSearchDeleteCommands(const std::string &command) -> std::vector<std::string>;
-
-    static auto exit(int errCode) -> void;
 
     auto isEmptyCommand(const std::vector<std::string> &params) -> bool;
 
