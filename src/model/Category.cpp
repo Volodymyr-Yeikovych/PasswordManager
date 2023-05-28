@@ -42,10 +42,10 @@ auto Category::getName() const -> std::string {
 
 auto Category::getMatchingVec(const Password &password) -> std::vector<Password> {
     auto matchingVec = std::vector<Password>();
-    for (auto const &entry : categoryPasswords) {
+    for (auto const &entry: categoryPasswords) {
         auto matchingName = password.getName().empty() || password.getName() == entry.getName();
         auto matchingPassword = password.getPassword().empty() || password.getPassword() == entry.getPassword();
-        auto matchingWebsite =  password.getWebsite().empty() || password.getWebsite() == entry.getWebsite();
+        auto matchingWebsite = password.getWebsite().empty() || password.getWebsite() == entry.getWebsite();
         auto matchingLogin = password.getLogin().empty() || password.getLogin() == entry.getLogin();
         if (matchingName && matchingPassword && matchingWebsite && matchingLogin) matchingVec.emplace_back(entry);
     }
@@ -69,61 +69,85 @@ auto Category::getPasswordVec() const -> std::vector<Password> {
 auto Category::sortByLength(const std::string &field, const std::string &order) -> void {
     if (field == "n") {
         if (order == "asc")
-            std::ranges::sort(categoryPasswords, [] (Password &p1, Password &p2) -> int {return p1.getName().size() < p2.getName().size();});
+            std::ranges::sort(categoryPasswords, [](Password &p1, Password &p2) -> int {
+                return p1.getName().size() < p2.getName().size();
+            });
         if (order == "desc")
-            std::ranges::sort(categoryPasswords, [] (Password &p1, Password &p2) -> int {return p1.getName().size() > p2.getName().size();});
+            std::ranges::sort(categoryPasswords, [](Password &p1, Password &p2) -> int {
+                return p1.getName().size() > p2.getName().size();
+            });
     }
     if (field == "pw") {
         if (order == "asc")
-            std::ranges::sort(categoryPasswords, [] (Password &p1, Password &p2) -> int {return p1.getPassword().size() < p2.getPassword().size();});
+            std::ranges::sort(categoryPasswords, [](Password &p1, Password &p2) -> int {
+                return p1.getPassword().size() < p2.getPassword().size();
+            });
         if (order == "desc")
-            std::ranges::sort(categoryPasswords, [] (Password &p1, Password &p2) -> int {return p1.getPassword().size() > p2.getPassword().size();});
+            std::ranges::sort(categoryPasswords, [](Password &p1, Password &p2) -> int {
+                return p1.getPassword().size() > p2.getPassword().size();
+            });
     }
     if (field == "w") {
         if (order == "asc")
-            std::ranges::sort(categoryPasswords, [] (Password &p1, Password &p2) -> int {return p1.getWebsite().size() < p2.getWebsite().size();});
+            std::ranges::sort(categoryPasswords, [](Password &p1, Password &p2) -> int {
+                return p1.getWebsite().size() < p2.getWebsite().size();
+            });
         if (order == "desc")
-            std::ranges::sort(categoryPasswords, [] (Password &p1, Password &p2) -> int {return p1.getWebsite().size() > p2.getWebsite().size();});
+            std::ranges::sort(categoryPasswords, [](Password &p1, Password &p2) -> int {
+                return p1.getWebsite().size() > p2.getWebsite().size();
+            });
     }
     if (field == "l") {
         if (order == "asc")
-            std::ranges::sort(categoryPasswords, [] (Password &p1, Password &p2) -> int {return p1.getLogin().size() < p2.getLogin().size();});
+            std::ranges::sort(categoryPasswords, [](Password &p1, Password &p2) -> int {
+                return p1.getLogin().size() < p2.getLogin().size();
+            });
         if (order == "desc")
-            std::ranges::sort(categoryPasswords, [] (Password &p1, Password &p2) -> int {return p1.getLogin().size() > p2.getLogin().size();});
+            std::ranges::sort(categoryPasswords, [](Password &p1, Password &p2) -> int {
+                return p1.getLogin().size() > p2.getLogin().size();
+            });
     }
 }
 
 auto Category::sortAlphabetically(const std::string &field, const std::string &order) -> void {
     if (field == "n") {
         if (order == "asc") {
-            std::ranges::sort(categoryPasswords, [] (Password &p1, Password &p2) -> int {return p1.getName() < p2.getName();});
+            std::ranges::sort(categoryPasswords,
+                              [](Password &p1, Password &p2) -> int { return p1.getName() < p2.getName(); });
         }
         if (order == "desc") {
-            std::ranges::sort(categoryPasswords, [] (Password &p1, Password &p2) -> int {return p1.getName() > p2.getName();});
+            std::ranges::sort(categoryPasswords,
+                              [](Password &p1, Password &p2) -> int { return p1.getName() > p2.getName(); });
         }
     }
     if (field == "pw") {
         if (order == "asc") {
-            std::ranges::sort(categoryPasswords, [] (Password &p1, Password &p2) -> int {return p1.getPassword() < p2.getPassword();});
+            std::ranges::sort(categoryPasswords,
+                              [](Password &p1, Password &p2) -> int { return p1.getPassword() < p2.getPassword(); });
         }
         if (order == "desc") {
-            std::ranges::sort(categoryPasswords, [] (Password &p1, Password &p2) -> int {return p1.getPassword() > p2.getPassword();});
+            std::ranges::sort(categoryPasswords,
+                              [](Password &p1, Password &p2) -> int { return p1.getPassword() > p2.getPassword(); });
         }
     }
     if (field == "w") {
         if (order == "asc") {
-            std::ranges::sort(categoryPasswords, [] (Password &p1, Password &p2) -> int {return p1.getWebsite() < p2.getWebsite();});
+            std::ranges::sort(categoryPasswords,
+                              [](Password &p1, Password &p2) -> int { return p1.getWebsite() < p2.getWebsite(); });
         }
         if (order == "desc") {
-            std::ranges::sort(categoryPasswords, [] (Password &p1, Password &p2) -> int {return p1.getWebsite() > p2.getWebsite();});
+            std::ranges::sort(categoryPasswords,
+                              [](Password &p1, Password &p2) -> int { return p1.getWebsite() > p2.getWebsite(); });
         }
     }
     if (field == "l") {
         if (order == "asc") {
-            std::ranges::sort(categoryPasswords, [] (Password &p1, Password &p2) -> int {return p1.getLogin() < p2.getLogin();});
+            std::ranges::sort(categoryPasswords,
+                              [](Password &p1, Password &p2) -> int { return p1.getLogin() < p2.getLogin(); });
         }
         if (order == "desc") {
-            std::ranges::sort(categoryPasswords, [] (Password &p1, Password &p2) -> int {return p1.getLogin() > p2.getLogin();});
+            std::ranges::sort(categoryPasswords,
+                              [](Password &p1, Password &p2) -> int { return p1.getLogin() > p2.getLogin(); });
         }
     }
 }

@@ -9,24 +9,6 @@
 #include <random>
 #include <valarray>
 
-auto PasswordMapper::mapFileEntryToPassword(const std::string &line) -> Password {
-    auto dDotVec = strSplitTrim(line, ":");
-    if (dDotVec.size() < 3 || dDotVec.size() > 5) return {};
-
-    auto name = dDotVec[0];
-    auto password = dDotVec[1];
-    auto website = std::string();
-    auto login = std::string();
-    if (dDotVec.size() > 3) website = dDotVec[3];
-    if (dDotVec.size() > 4) login = dDotVec[4];
-
-    auto mappedPassword = Password(name, password);
-    mappedPassword.setWebsite(website);
-    mappedPassword.setLogin(login);
-
-    return mappedPassword;
-}
-
 auto PasswordMapper::mapTextToCategoryVec(const std::string &text) -> std::vector<Category> {
     auto categoryVec = std::vector<Category>();
     auto lCurSplit = PasswordMapper::strSplitTrim(text, "\\{");
@@ -58,9 +40,9 @@ auto PasswordMapper::mapTextToCategoryVec(const std::string &text) -> std::vecto
 
 auto PasswordMapper::mapCategoryVecToText(const std::vector<Category> &categoryVec) -> std::string {
     auto text = std::string();
-    for (auto const &cat : categoryVec) {
+    for (auto const &cat: categoryVec) {
         text.append(cat.getName() + " ").append("{\n");
-        for (auto const& psw : cat.getPasswordVec()) {
+        for (auto const &psw: cat.getPasswordVec()) {
             text.append("\t").append(mapPasswordToString(psw)).append("\n");
         }
         text.append("}\n");
@@ -219,17 +201,6 @@ auto PasswordMapper::createPassword(int size, bool isUpper, bool isSpecial) -> s
     return password;
 }
 
-auto PasswordMapper::mapCategoryToString(const Category &category) -> std::string {
-    auto resultStr = std::string();
-    resultStr.append(category.getName()).append(" ");
-    resultStr.append("{\n");
-    for (auto &psw : category.getPasswordVec()) {
-        resultStr.append(PasswordMapper::mapPasswordToString(psw)).append("\n");
-    }
-    resultStr.append("}\n");
-    return resultStr;
-}
-
 auto PasswordMapper::strSplit(const std::string &string, const std::string &delim) -> std::vector<std::string> {
     auto regex = std::regex(delim);
     auto dashIter = std::sregex_token_iterator(string.begin(), string.end(), regex, -1);
@@ -265,3 +236,4 @@ auto PasswordMapper::isNumerical(const std::string &str) -> bool {
     while (begIt != str.end() && std::isdigit(*begIt)) begIt++;
     return !str.empty() && begIt == str.end();
 }
+

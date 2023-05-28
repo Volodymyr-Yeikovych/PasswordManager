@@ -1,7 +1,7 @@
-#include "src/managers/ProgramManager.h"
+#include "src/controller/ProgramController.h"
 
 auto main() -> int {
     FileManager fileManager = FileManager();
-    ProgramManager manager = ProgramManager(fileManager, ConsoleManager(), CryptographyManager(fileManager), PasswordMapper());
+    ProgramController manager = ProgramController(fileManager, ConsoleView(), CryptographyManager(fileManager), PasswordMapper());
     manager.start();
 }

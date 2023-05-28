@@ -5,11 +5,11 @@
 #include <algorithm>
 #include <regex>
 #include <set>
-#include "ProgramManager.h"
+#include "ProgramController.h"
 #include "fmt/core.h"
 #include "fmt/ranges.h"
 
-auto ProgramManager::operator=(const ProgramManager &other) -> ProgramManager& {
+auto ProgramController::operator=(const ProgramController &other) -> ProgramController & {
     this->fileManager = other.fileManager;
     this->consoleManager = other.consoleManager;
     this->cryptographyManager = other.cryptographyManager;
@@ -17,8 +17,8 @@ auto ProgramManager::operator=(const ProgramManager &other) -> ProgramManager& {
     return *this;
 }
 
-ProgramManager::ProgramManager(const FileManager &fileManager, const ConsoleManager &consoleManager,
-                               const CryptographyManager &cryptographyManager, const PasswordMapper &mapper)
+ProgramController::ProgramController(const FileManager &fileManager, const ConsoleView &consoleManager,
+                                     const CryptographyManager &cryptographyManager, const PasswordMapper &mapper)
         : fileManager(fileManager), consoleManager(consoleManager),
           cryptographyManager(cryptographyManager), passwordMapper(mapper) {
     this->fileManager = fileManager;
@@ -27,7 +27,7 @@ ProgramManager::ProgramManager(const FileManager &fileManager, const ConsoleMana
     this->passwordMapper = mapper;
 }
 
-auto ProgramManager::start() -> void {
+auto ProgramController::start() -> void {
     auto pathVector = fileManager.getFilesVector();
     consoleManager.println(
             "Choose files from list to decrypt/encrypt.");
@@ -43,8 +43,7 @@ auto ProgramManager::start() -> void {
     consoleManager.println(filePath.string());
     consoleManager.print("Provide your password: ");
     auto userPassword = consoleManager.readString();
-    cryptographyManager.encrypt(filePath, userPassword);
-//    cryptographyManager.decrypt(filePath, userPassword);
+    cryptographyManager.decrypt(filePath, userPassword);
     auto decryptedFile = fileManager.getFileLines(filePath);
     consoleManager.println("Write help to list available commands.");
     auto command = std::string();
@@ -57,32 +56,32 @@ auto ProgramManager::start() -> void {
             continue;
         } else executeCommand(command);
     }
-//    cryptographyManager.encrypt(filePath, userPassword);
+    cryptographyManager.encrypt(filePath, userPassword);
 }
 
-auto ProgramManager::inputOutOfBounds(const int &input, const unsigned long long int &poolSize) -> bool {
+auto ProgramController::inputOutOfBounds(const int &input, const unsigned long long int &poolSize) -> bool {
     if (input <= 0 || input > poolSize) return true;
     return false;
 }
 
-auto ProgramManager::isExitCommand(const std::string &command) -> bool {
+auto ProgramController::isExitCommand(const std::string &command) -> bool {
     return command == "exit";
 }
 
-auto ProgramManager::isNotCommand(const std::string &command) -> bool {
+auto ProgramController::isNotCommand(const std::string &command) -> bool {
     return !isExitCommand(command) && !isHelpCommand(command) && !isSearchCommand(command) &&
            !isSortCommand(command) && !isAddCommand(command) && !isEditPasswordCommand(command)
            && !isDeletePasswordCommand(command) && !isAddCategoryCommand(command) && !isDeleteCategoryCommand(command);
 }
 
-auto ProgramManager::isEmptyCommand(const std::vector<std::string> &params) -> bool {
+auto ProgramController::isEmptyCommand(const std::vector<std::string> &params) -> bool {
     if (params.empty()) {
         return true;
     }
     return false;
 }
 
-auto ProgramManager::isInvalidSADCommandSyntax(const std::vector<std::string> &params) -> bool {
+auto ProgramController::isInvalidSADCommandSyntax(const std::vector<std::string> &params) -> bool {
     if (params.size() % 2 == 0) {
         consoleManager.println("Error: Invalid syntax for commands (search/add/delete).");
         consoleManager.println("Use 'help' for manual.");
@@ -91,7 +90,7 @@ auto ProgramManager::isInvalidSADCommandSyntax(const std::vector<std::string> &p
     return false;
 }
 
-auto ProgramManager::isInvalidAddCommandLength(const std::vector<std::string> &params) -> bool {
+auto ProgramController::isInvalidAddCommandLength(const std::vector<std::string> &params) -> bool {
     if (params.size() > 3) {
         consoleManager.println("Error: Invalid syntax, refer to 'help' for manual.");
         return true;
@@ -99,15 +98,15 @@ auto ProgramManager::isInvalidAddCommandLength(const std::vector<std::string> &p
     return false;
 }
 
-auto ProgramManager::isInvalidCommandKeyword(const std::vector<std::string> &params,
-                                             const std::string &commandKeyword) -> bool {
+auto ProgramController::isInvalidCommandKeyword(const std::vector<std::string> &params,
+                                                const std::string &commandKeyword) -> bool {
     if (params[0] != commandKeyword) {
         return true;
     }
     return false;
 }
 
-auto ProgramManager::isInvalidSEDParamType(const std::string &paramType) -> bool {
+auto ProgramController::isInvalidSEDParamType(const std::string &paramType) -> bool {
     auto wrongParam = bool(true);
     for (const auto &param: SEARCH_EDIT_DELETE_PARAMS_TYPES) {
         if (paramType == param) {
@@ -127,14 +126,14 @@ auto ProgramManager::isInvalidSEDParamType(const std::string &paramType) -> bool
     return false;
 }
 
-auto ProgramManager::isInvalidSEDCommandTypes(const std::vector<std::string> &params) -> bool {
+auto ProgramController::isInvalidSEDCommandTypes(const std::vector<std::string> &params) -> bool {
     for (int i = 1; i < params.size(); i += 2) {
         if (isInvalidSEDParamType(params[i])) return true;
     }
     return false;
 }
 
-auto ProgramManager::isInvalidSortParam(const std::string &param) -> bool {
+auto ProgramController::isInvalidSortParam(const std::string &param) -> bool {
     for (const auto &el: SORT_PARAMS_TYPES) {
         if (param == el) {
             return false;
@@ -143,7 +142,7 @@ auto ProgramManager::isInvalidSortParam(const std::string &param) -> bool {
     return true;
 }
 
-auto ProgramManager::isInvalidSortOrder(const std::string &param) -> bool {
+auto ProgramController::isInvalidSortOrder(const std::string &param) -> bool {
     for (const auto &el: SORT_PARAMS_ORDER_TYPES) {
         if (param == el) {
             return false;
@@ -152,7 +151,7 @@ auto ProgramManager::isInvalidSortOrder(const std::string &param) -> bool {
     return true;
 }
 
-auto ProgramManager::isInvalidSortCommandTypes(const std::vector<std::string> &params) -> bool {
+auto ProgramController::isInvalidSortCommandTypes(const std::vector<std::string> &params) -> bool {
     auto paramSet = std::set<std::string>();
     auto timesInserted = 0;
     for (int i = 0; const auto &param: params) {
@@ -176,7 +175,7 @@ auto ProgramManager::isInvalidSortCommandTypes(const std::vector<std::string> &p
     return false;
 }
 
-auto ProgramManager::isInvalidAddCommandTypes(const std::vector<std::string> &params) -> bool {
+auto ProgramController::isInvalidAddCommandTypes(const std::vector<std::string> &params) -> bool {
     if (params[1] != "c" && params[1] != "g") return true;
     auto valuesVec = PasswordMapper::strSplitTrim(params[2], ":");
     if (valuesVec.size() < 3 || valuesVec.size() > 5) return true;
@@ -199,7 +198,7 @@ auto ProgramManager::isInvalidAddCommandTypes(const std::vector<std::string> &pa
     return false;
 }
 
-auto ProgramManager::getStringVecFromAddCommands(const std::string &command) -> std::vector<std::string> {
+auto ProgramController::getStringVecFromAddCommands(const std::string &command) -> std::vector<std::string> {
     auto quoteVec = PasswordMapper::strSplitTrim(command, "\"");
     if (quoteVec.size() < 2) return {};
     auto leftSplit = PasswordMapper::strSplitTrim(quoteVec[0], "\\s");
@@ -213,7 +212,7 @@ auto ProgramManager::getStringVecFromAddCommands(const std::string &command) -> 
     return paramsVec;
 }
 
-auto ProgramManager::getStringVecFromSearchDeleteCommands(const std::string &command) -> std::vector<std::string> {
+auto ProgramController::getStringVecFromSearchDeleteCommands(const std::string &command) -> std::vector<std::string> {
     auto dashVec = PasswordMapper::strSplitTrim(command, "-");
     auto paramsVec = std::vector<std::string>();
     paramsVec.emplace_back(dashVec[0]);
@@ -232,13 +231,13 @@ auto ProgramManager::getStringVecFromSearchDeleteCommands(const std::string &com
     return paramsVec;
 }
 
-auto ProgramManager::getStringVecFromAddDelCatCommands(const std::string &command) -> std::vector<std::string> {
+auto ProgramController::getStringVecFromAddDelCatCommands(const std::string &command) -> std::vector<std::string> {
     auto paramsVec = PasswordMapper::strSplitTrim(command, "\\s");
 //    fmt::print("{} \n", paramsVec); /// debug line <------------------------
     return paramsVec;
 }
 
-auto ProgramManager::getStringVecFromSortCommand(const std::string &command) -> std::vector<std::string> {
+auto ProgramController::getStringVecFromSortCommand(const std::string &command) -> std::vector<std::string> {
     auto dashVec = PasswordMapper::strSplitTrim(command, "-");
     auto paramsVec = std::vector<std::string>();
     for (int i = 0; const auto &params: dashVec) {
@@ -253,7 +252,7 @@ auto ProgramManager::getStringVecFromSortCommand(const std::string &command) -> 
     return paramsVec;
 }
 
-auto ProgramManager::getStringVecFromEditCommand(const std::string &command) -> std::vector<std::string> {
+auto ProgramController::getStringVecFromEditCommand(const std::string &command) -> std::vector<std::string> {
     auto paramsVec = std::vector<std::string>();
     auto pipeVec = PasswordMapper::strSplitTrim(command, "\\|");
     if (pipeVec.size() != 2) {
@@ -275,7 +274,7 @@ auto ProgramManager::getStringVecFromEditCommand(const std::string &command) -> 
     return paramsVec;
 }
 
-auto ProgramManager::isInvalidAddDelCatCommandLength(const std::vector<std::string> &params) -> bool {
+auto ProgramController::isInvalidAddDelCatCommandLength(const std::vector<std::string> &params) -> bool {
     if (params.size() != 1 && params.size() != 2) {
         consoleManager.println("Error: Invalid syntax, refer to 'help' for manual.");
         return true;
@@ -283,7 +282,7 @@ auto ProgramManager::isInvalidAddDelCatCommandLength(const std::vector<std::stri
     return false;
 }
 
-auto ProgramManager::isInvalidEditCommandTypes(const std::vector<std::string> &params) -> bool {
+auto ProgramController::isInvalidEditCommandTypes(const std::vector<std::string> &params) -> bool {
     auto pipeCount = 0;
     auto keyWordCount = 0;
     for (int i = 0; auto const &el: params) {
@@ -315,7 +314,7 @@ auto ProgramManager::isInvalidEditCommandTypes(const std::vector<std::string> &p
 /** SEARCH
  **
  **/
-auto ProgramManager::isSearchCommand(const std::string &command) -> bool {
+auto ProgramController::isSearchCommand(const std::string &command) -> bool {
     auto paramsVec = getStringVecFromSearchDeleteCommands(command);
     if (isEmptyCommand(paramsVec)) return false;
     if (isInvalidSADCommandSyntax(paramsVec)) return false;
@@ -327,7 +326,7 @@ auto ProgramManager::isSearchCommand(const std::string &command) -> bool {
 /** SORT
      **
      **/
-auto ProgramManager::isSortCommand(const std::string &command) -> bool {
+auto ProgramController::isSortCommand(const std::string &command) -> bool {
     auto paramsVec = getStringVecFromSortCommand(command);
     if (isEmptyCommand(paramsVec)) return false;
     if (isInvalidCommandKeyword(paramsVec, "sort")) return false;
@@ -338,7 +337,7 @@ auto ProgramManager::isSortCommand(const std::string &command) -> bool {
 /** ADD
      **
      **/
-auto ProgramManager::isAddCommand(const std::string &command) -> bool {
+auto ProgramController::isAddCommand(const std::string &command) -> bool {
     auto paramsVec = getStringVecFromAddCommands(command);
     if (isEmptyCommand(paramsVec)) return false;
     if (isInvalidSADCommandSyntax(paramsVec)) return false;
@@ -351,7 +350,7 @@ auto ProgramManager::isAddCommand(const std::string &command) -> bool {
 /** EDIT
      **
      **/
-auto ProgramManager::isEditPasswordCommand(const std::string &command) -> bool {
+auto ProgramController::isEditPasswordCommand(const std::string &command) -> bool {
     auto paramsVec = getStringVecFromEditCommand(command);
     if (isEmptyCommand(paramsVec)) return false;
     if (isInvalidCommandKeyword(paramsVec, "edit")) return false;
@@ -362,7 +361,7 @@ auto ProgramManager::isEditPasswordCommand(const std::string &command) -> bool {
 /** DELETE
      **
      **/
-auto ProgramManager::isDeletePasswordCommand(const std::string &command) -> bool {
+auto ProgramController::isDeletePasswordCommand(const std::string &command) -> bool {
     auto paramsVec = getStringVecFromSearchDeleteCommands(command);
     if (isEmptyCommand(paramsVec)) return false;
     if (isInvalidSADCommandSyntax(paramsVec)) return false;
@@ -374,7 +373,7 @@ auto ProgramManager::isDeletePasswordCommand(const std::string &command) -> bool
 /** ADDCAT
      **
      **/
-auto ProgramManager::isAddCategoryCommand(const std::string &command) -> bool {
+auto ProgramController::isAddCategoryCommand(const std::string &command) -> bool {
     auto paramsVec = getStringVecFromAddDelCatCommands(command);
     if (isEmptyCommand(paramsVec)) return false;
     if (isInvalidCommandKeyword(paramsVec, "addcat")) return false;
@@ -385,7 +384,7 @@ auto ProgramManager::isAddCategoryCommand(const std::string &command) -> bool {
 /** DELCAT
      **
      **/
-auto ProgramManager::isDeleteCategoryCommand(const std::string &command) -> bool {
+auto ProgramController::isDeleteCategoryCommand(const std::string &command) -> bool {
     auto paramsVec = getStringVecFromAddDelCatCommands(command);
     if (isEmptyCommand(paramsVec)) return false;
     if (isInvalidCommandKeyword(paramsVec, "delcat")) return false;
@@ -393,20 +392,20 @@ auto ProgramManager::isDeleteCategoryCommand(const std::string &command) -> bool
     return true;
 }
 
-auto ProgramManager::isHelpCommand(const std::string &command) -> bool {
+auto ProgramController::isHelpCommand(const std::string &command) -> bool {
     return command == "help";
 }
 
-auto ProgramManager::eraseNotMatching(const Category &searchCat,
-                                      std::map<Category, std::vector<Password>> &matchingPsw) -> void {
+auto ProgramController::eraseNotMatching(const Category &searchCat,
+                                         std::map<Category, std::vector<Password>> &matchingPsw) -> void {
     for (const auto &entry: matchingPsw) {
         if (entry.first != searchCat) matchingPsw.erase(entry.first);
     }
 }
 
-auto ProgramManager::editData(const Category &catToMatch, const Category &catToEdit,
-                              const Password &pswToMatch, const Password &pswToEdit,
-                              std::vector<Category> &saveData) -> void {
+auto ProgramController::editData(const Category &catToMatch, const Category &catToEdit,
+                                 const Password &pswToMatch, const Password &pswToEdit,
+                                 std::vector<Category> &saveData) -> void {
     auto searchCatSelected = !catToMatch.getName().empty();
     auto editCatSelected = !catToEdit.getName().empty();
 
@@ -423,11 +422,9 @@ auto ProgramManager::editData(const Category &catToMatch, const Category &catToE
             auto matchingVec = cat.getMatchingVec(pswToMatch);
             if (!editCatSelected) {
                 for (auto &psw: matchingVec) {
-                    consoleManager.println("Before: " + PasswordMapper::mapPasswordToString(psw));
                     cat.removePassword(psw);
                     psw.editMatching(pswToEdit);
                     cat.addPassword(psw);
-                    consoleManager.println("After: " + PasswordMapper::mapPasswordToString(psw));
                 }
             } else {
                 diffCatMatching.insert({counter, matchingVec});
@@ -487,7 +484,7 @@ auto ProgramManager::editData(const Category &catToMatch, const Category &catToE
     }
 }
 
-auto ProgramManager::catExists(const Category &catToAdd, const std::vector<Category> &fileData) -> bool {
+auto ProgramController::catExists(const Category &catToAdd, const std::vector<Category> &fileData) -> bool {
     auto exists = bool(false);
     for (const auto &cat: fileData) {
         if (!catToAdd.getName().empty() && cat.getName() == catToAdd.getName()) {
@@ -498,8 +495,8 @@ auto ProgramManager::catExists(const Category &catToAdd, const std::vector<Categ
     return exists;
 }
 
-auto ProgramManager::getNameMatchingCatIterator(const Category &catToAdd,
-                                                const std::vector<Category> &fileData) -> std::vector<Category>::const_iterator {
+auto ProgramController::getNameMatchingCatIterator(const Category &catToAdd,
+                                                   const std::vector<Category> &fileData) -> std::vector<Category>::const_iterator {
     auto it = fileData.begin();
     for (const auto &cat: fileData) {
         if (cat.getName() == catToAdd.getName()) break;
@@ -508,8 +505,8 @@ auto ProgramManager::getNameMatchingCatIterator(const Category &catToAdd,
     return it;
 }
 
-auto ProgramManager::deleteMatching(const Password &pswToMatch, const Category &catToMatch,
-                                    std::vector<Category> &fileData) -> void {
+auto ProgramController::deleteMatching(const Password &pswToMatch, const Category &catToMatch,
+                                       std::vector<Category> &fileData) -> void {
     auto hasCatToMatch = !catToMatch.getName().empty();
 
     auto toDelete = std::map<int, std::vector<Password>>();
@@ -529,14 +526,14 @@ auto ProgramManager::deleteMatching(const Password &pswToMatch, const Category &
     }
 }
 
-auto ProgramManager::isSortParam(const std::string &param) -> bool {
+auto ProgramController::isSortParam(const std::string &param) -> bool {
     for (const auto &constParam: SORT_PARAMS_TYPES) {
         if (constParam == param) return true;
     }
     return false;
 }
 
-auto ProgramManager::isSortSubParam(const std::string &subParam) -> bool {
+auto ProgramController::isSortSubParam(const std::string &subParam) -> bool {
     for (const auto &constParam: SORT_PARAMS_ORDER_TYPES) {
         if (constParam == subParam) return true;
     }
@@ -544,7 +541,7 @@ auto ProgramManager::isSortSubParam(const std::string &subParam) -> bool {
 }
 
 auto
-ProgramManager::getSortVecFromSortCommand(const std::vector<std::string> &commandParams) -> std::vector<std::string> {
+ProgramController::getSortVecFromSortCommand(const std::vector<std::string> &commandParams) -> std::vector<std::string> {
     auto sortVec = std::vector<std::string>();
     for (int i = 1; i < commandParams.size(); i++) {
         auto nextIsEmpty = (i + 1) == commandParams.size();
@@ -570,7 +567,7 @@ ProgramManager::getSortVecFromSortCommand(const std::vector<std::string> &comman
     return sortVec;
 }
 
-auto ProgramManager::isValidSortVec(const std::vector<std::string> &sortVec) -> bool {
+auto ProgramController::isValidSortVec(const std::vector<std::string> &sortVec) -> bool {
     if (sortVec.size() % 3 != 0) return false;
     for (int i = 0; i < sortVec.size(); i += 3) {
         const auto &cur = sortVec[i];
@@ -583,7 +580,7 @@ auto ProgramManager::isValidSortVec(const std::vector<std::string> &sortVec) -> 
     return true;
 }
 
-auto ProgramManager::sortData(const std::vector<std::string> &sortVec, std::vector<Category> &fileData) -> void {
+auto ProgramController::sortData(const std::vector<std::string> &sortVec, std::vector<Category> &fileData) -> void {
     for (int i = 0; i < sortVec.size(); i += 3) {
         const auto &sortParam = sortVec[i];
         const auto &firstSub = sortVec[i + 1];
@@ -623,7 +620,7 @@ auto ProgramManager::sortData(const std::vector<std::string> &sortVec, std::vect
 
 }
 
-auto ProgramManager::executeCommand(const std::string &command) -> void {
+auto ProgramController::executeCommand(const std::string &command) -> void {
     if (isExitCommand(command)) return;
     try {
         if (isHelpCommand(command)) listCommands();
@@ -639,7 +636,7 @@ auto ProgramManager::executeCommand(const std::string &command) -> void {
     }
 }
 
-auto ProgramManager::executeSearch(const std::string &command) -> void {
+auto ProgramController::executeSearch(const std::string &command) -> void {
     auto fileContent = fileManager.getFileContents(filePath);
     auto categoriesVec = PasswordMapper::mapTextToCategoryVec(fileContent);
     auto commandParams = getStringVecFromSearchDeleteCommands(command);
@@ -660,13 +657,12 @@ auto ProgramManager::executeSearch(const std::string &command) -> void {
     consoleManager.printCategoryMap(entryMap);
 }
 
-auto ProgramManager::executeSort(const std::string &command) -> void {
+auto ProgramController::executeSort(const std::string &command) -> void {
     auto fileContent = fileManager.getFileContents(filePath);
     auto categoriesVec = PasswordMapper::mapTextToCategoryVec(fileContent);
     auto commandParams = getStringVecFromSortCommand(command);
 
     auto sortVec = getSortVecFromSortCommand(commandParams);
-    fmt::println("{} sv\n", sortVec);
 
     if (!isValidSortVec(sortVec)) {
         consoleManager.println("Error: Invalid sorting order. First param(%1) should be before second(%2) !!!");
@@ -674,11 +670,13 @@ auto ProgramManager::executeSort(const std::string &command) -> void {
     }
     sortData(sortVec, categoriesVec);
 
+    consoleManager.displayCategoryVec(categoriesVec);
+
     auto newFileContent = PasswordMapper::mapCategoryVecToText(categoriesVec);
     fileManager.setFileContents(newFileContent, filePath);
 }
 
-auto ProgramManager::executeAdd(const std::string &command) -> void {
+auto ProgramController::executeAdd(const std::string &command) -> void {
     auto fileContent = fileManager.getFileContents(filePath);
     auto categoriesVec = PasswordMapper::mapTextToCategoryVec(fileContent);
     auto commandParams = getStringVecFromAddCommands(command);
@@ -704,7 +702,7 @@ auto ProgramManager::executeAdd(const std::string &command) -> void {
     fileManager.setFileContents(newFileContent, filePath);
 }
 
-auto ProgramManager::executeEditPassword(const std::string &command) -> void {
+auto ProgramController::executeEditPassword(const std::string &command) -> void {
     auto fileContent = fileManager.getFileContents(filePath);
     auto categoriesVec = PasswordMapper::mapTextToCategoryVec(fileContent);
     auto commandParams = getStringVecFromEditCommand(command);
@@ -720,7 +718,7 @@ auto ProgramManager::executeEditPassword(const std::string &command) -> void {
     fileManager.setFileContents(newFileContent, filePath);
 }
 
-auto ProgramManager::executeDeletePassword(const std::string &command) -> void {
+auto ProgramController::executeDeletePassword(const std::string &command) -> void {
     auto fileContent = fileManager.getFileContents(filePath);
     auto categoriesVec = PasswordMapper::mapTextToCategoryVec(fileContent);
     auto commandParams = getStringVecFromSearchDeleteCommands(command);
@@ -734,7 +732,7 @@ auto ProgramManager::executeDeletePassword(const std::string &command) -> void {
     fileManager.setFileContents(newFileContent, filePath);
 }
 
-auto ProgramManager::executeAddCategory(const std::string &command) -> void {
+auto ProgramController::executeAddCategory(const std::string &command) -> void {
     auto fileContent = fileManager.getFileContents(filePath);
     auto categoriesVec = PasswordMapper::mapTextToCategoryVec(fileContent);
     auto commandParams = getStringVecFromAddDelCatCommands(command);
@@ -758,7 +756,7 @@ auto ProgramManager::executeAddCategory(const std::string &command) -> void {
 
 }
 
-auto ProgramManager::executeDeleteCategory(const std::string &command) -> void {
+auto ProgramController::executeDeleteCategory(const std::string &command) -> void {
     auto fileContent = fileManager.getFileContents(filePath);
     auto categoriesVec = PasswordMapper::mapTextToCategoryVec(fileContent);
     auto commandParams = getStringVecFromAddDelCatCommands(command);
@@ -781,7 +779,7 @@ auto ProgramManager::executeDeleteCategory(const std::string &command) -> void {
     fileManager.setFileContents(newFileContent, filePath);
 }
 
-auto ProgramManager::listCommands() -> void {
+auto ProgramController::listCommands() -> void {
     consoleManager.println("================================================");
     consoleManager.println("------------------------------------------------");
     consoleManager.println("exit");

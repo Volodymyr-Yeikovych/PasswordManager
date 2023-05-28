@@ -3,8 +3,8 @@
 //
 
 #pragma once
-#ifndef PJC_PROJECT_PASSWORDMANAGER_CONSOLEMANAGER_H
-#define PJC_PROJECT_PASSWORDMANAGER_CONSOLEMANAGER_H
+#ifndef PJC_PROJECT_PASSWORDMANAGER_CONSOLEVIEW_H
+#define PJC_PROJECT_PASSWORDMANAGER_CONSOLEVIEW_H
 
 
 #include <filesystem>
@@ -12,17 +12,25 @@
 #include <map>
 #include "../model/Category.h"
 
-class ConsoleManager {
+class ConsoleView {
 
 public:
     auto print(std::string const &input) -> void;
+
     auto println(std::string const &input) -> void;
+
     auto println() -> void;
+
     auto displayFiles(const std::vector<std::filesystem::path> &files) -> void;
+
     auto readNum() -> int;
+
     auto readString() -> std::string;
+
     auto printCategoryMap(const std::map<Category, std::vector<Password>> &toPrint) -> void;
+
+    auto displayCategoryVec(const std::vector<Category> &catVec) -> void;
 };
 
 
-#endif //PJC_PROJECT_PASSWORDMANAGER_CONSOLEMANAGER_H
+#endif //PJC_PROJECT_PASSWORDMANAGER_CONSOLEVIEW_H

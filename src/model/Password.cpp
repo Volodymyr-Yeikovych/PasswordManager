@@ -63,3 +63,7 @@ auto Password::editMatching(const Password &password) -> void {
     if (websiteMatches) this->website = password.website;
     if (loginMatches) this->login = password.login;
 }
+
+auto Password::toString() const -> std::string {
+    return "Password{Name(" + name + "), Password(" + password + "), Website(" + website + "), Login(" + login + ")}";
+}

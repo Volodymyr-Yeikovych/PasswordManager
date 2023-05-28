@@ -18,11 +18,7 @@ public:
 
     FileManager();
 
-    auto operator=(FileManager const &fileManager) -> FileManager&;
-
-    auto countFilesInDefDir() -> int;
-
-    auto countFilesDir(const std::string &dir) -> int;
+    auto operator=(FileManager const &fileManager) -> FileManager &;
 
     auto getFilesVector() -> std::vector<std::filesystem::path>;
 

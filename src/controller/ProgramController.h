@@ -2,17 +2,17 @@
 // Created by Volodymyr on 4/30/2023.
 //
 #pragma once
-#ifndef PJC_PROJECT_PASSWORDMANAGER_PROGRAMMANAGER_H
-#define PJC_PROJECT_PASSWORDMANAGER_PROGRAMMANAGER_H
+#ifndef PJC_PROJECT_PASSWORDMANAGER_PROGRAMCONTROLLER_H
+#define PJC_PROJECT_PASSWORDMANAGER_PROGRAMCONTROLLER_H
 
-#include "FileManager.h"
-#include "ConsoleManager.h"
-#include "CryptographyManager.h"
-#include "PasswordMapper.h"
+#include "../file/FileManager.h"
+#include "../view/ConsoleView.h"
+#include "../enc/CryptographyManager.h"
+#include "../mapper/PasswordMapper.h"
 
-class ProgramManager {
+class ProgramController {
     FileManager fileManager;
-    ConsoleManager consoleManager;
+    ConsoleView consoleManager;
     CryptographyManager cryptographyManager;
     PasswordMapper passwordMapper;
     std::filesystem::path filePath = std::filesystem::path();
@@ -22,13 +22,14 @@ class ProgramManager {
     const std::string DEFAULT_SORT_ORDER_FIRST_PARAM = "len";
     const std::string DEFAULT_SORT_ORDER_SECOND_PARAM = "asc";
 public:
-    explicit ProgramManager(const FileManager &fileManager, const ConsoleManager &consoleManager,
-                            const CryptographyManager &cryptographyManager, const PasswordMapper &mapper);
+    explicit ProgramController(const FileManager &fileManager, const ConsoleView &consoleManager,
+                               const CryptographyManager &cryptographyManager, const PasswordMapper &mapper);
 
     auto start() -> void;
 
-    auto operator=(ProgramManager const &programManager) -> ProgramManager&;
+    auto operator=(ProgramController const &programManager) -> ProgramController &;
 
+private:
     auto inputOutOfBounds(const int &input, const unsigned long long int &poolSize) -> bool;
 
     auto isExitCommand(const std::string &command) -> bool;
@@ -112,13 +113,20 @@ public:
 
     auto getNameMatchingCatIterator(const Category &catToAdd,
                                     const std::vector<Category> &fileData) -> std::vector<Category>::const_iterator;
-    auto deleteMatching(const Password &pswToMatch, const Category &catToMatch, std::vector<Category> &fileData) -> void;
+
+    auto
+    deleteMatching(const Password &pswToMatch, const Category &catToMatch, std::vector<Category> &fileData) -> void;
+
     auto sortData(const std::vector<std::string> &sortVec, std::vector<Category> &fileData) -> void;
+
     auto getSortVecFromSortCommand(const std::vector<std::string> &commandParams) -> std::vector<std::string>;
+
     auto isSortParam(const std::string &param) -> bool;
+
     auto isSortSubParam(const std::string &subParam) -> bool;
+
     auto isValidSortVec(const std::vector<std::string> &sortVec) -> bool;
 };
 
 
-#endif //PJC_PROJECT_PASSWORDMANAGER_PROGRAMMANAGER_H
+#endif //PJC_PROJECT_PASSWORDMANAGER_PROGRAMCONTROLLER_H

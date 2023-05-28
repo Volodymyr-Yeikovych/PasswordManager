@@ -15,21 +15,8 @@ FileManager::FileManager(const std::string &dir) {
 FileManager::FileManager() {
     this->defaultDir = R"(C:\Users\Volodymyr\CLionProjects\PJC_PROJECT_PasswordManager\resources\targetFiles)";
 }
-auto FileManager::countFilesInDefDir() -> int {
-    return countFilesDir(defaultDir);
-}
 
-auto FileManager::countFilesDir(std::string const& dir) -> int {
-    auto dirIter = std::filesystem::directory_iterator(dir);
-    auto fCount = 0;
-
-    for (auto& f : dirIter) {
-        if (f.is_regular_file()) fCount++;
-    }
-    return fCount;
-}
-
-auto FileManager::operator=(const FileManager &other) -> FileManager& {
+auto FileManager::operator=(const FileManager &other) -> FileManager & {
     return *this;
 }
 
@@ -37,7 +24,7 @@ auto FileManager::getFilesVector(const std::string &dir) -> std::vector<std::fil
     auto dirIter = std::filesystem::directory_iterator(dir);
     auto fileVec = std::vector<std::filesystem::path>();
 
-    for (auto& f : dirIter) {
+    for (auto &f: dirIter) {
         if (f.is_regular_file()) fileVec.push_back(f.path());
     }
     return fileVec;
@@ -47,7 +34,7 @@ auto FileManager::getFilesVector() -> std::vector<std::filesystem::path> {
     return getFilesVector(defaultDir);
 }
 
-auto FileManager::getFileLines(const std::filesystem::path &filePath) -> std::vector<std::string>{
+auto FileManager::getFileLines(const std::filesystem::path &filePath) -> std::vector<std::string> {
     auto in = std::fstream(filePath, std::fstream::in | std::fstream::app);
     auto line = std::string();
     auto lines = std::vector<std::string>();
@@ -58,9 +45,9 @@ auto FileManager::getFileLines(const std::filesystem::path &filePath) -> std::ve
     return lines;
 }
 
-auto FileManager::getFileContents(const std::filesystem::path &filePath) -> std::string{
+auto FileManager::getFileContents(const std::filesystem::path &filePath) -> std::string {
     auto content = std::string();
-    for (const auto &line : getFileLines(filePath)) {
+    for (const auto &line: getFileLines(filePath)) {
         content.append(line);
     }
     return content;
