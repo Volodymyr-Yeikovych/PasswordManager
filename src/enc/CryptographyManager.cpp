@@ -14,13 +14,15 @@ auto CryptographyManager::operator=(const CryptographyManager &other) -> Cryptog
     return *this;
 }
 
-auto CryptographyManager::getEnlargedPsw(const std::string &encPsw) -> std::string {
-    auto sliceFrom = encPsw.size();
-    auto slice = encPsw;
-    for (int i = sliceFrom; i < PSW_ENC_VEC.size(); i++) {
-        slice.append(PSW_ENC_VEC[i]);
+auto CryptographyManager::getCryptoSequence(const std::string &encPsw) -> std::string {
+    auto cryptoSeq = encPsw;
+    for (auto &c : cryptoSeq) {
+        auto c2 = PSW_ENC_VEC[c].at(0);
+        auto newC = (int) (c + c2);
+        while (newC > 100) newC -= 39;
+        c = (char) newC;
     }
-    return slice;
+    return cryptoSeq;
 }
 
 auto CryptographyManager::appendTime(std::string &contents) -> void {
@@ -62,7 +64,7 @@ auto CryptographyManager::getLastTimeModifiedMsg(std::string &contents) -> std::
 auto CryptographyManager::encrypt(const std::filesystem::path &path, const std::string &encPass) -> void {
     auto fileContents = fileManager.getFileContents(path);
     appendTime(fileContents);
-    auto pswEnlarged = getEnlargedPsw(encPass);
+    auto pswEnlarged = getCryptoSequence(encPass);
     auto repeatIndex = 0;
     auto i = 0;
     for (auto &c : fileContents) {
@@ -79,7 +81,7 @@ auto CryptographyManager::encrypt(const std::filesystem::path &path, const std::
 auto CryptographyManager::decrypt(const std::filesystem::path &path, const std::string &decPass) -> std::string {
     auto fileContents = fileManager.getFileContents(path);
     auto lastTimeModMsg = getLastTimeModifiedMsg(fileContents);
-    auto pswEnlarged = getEnlargedPsw(decPass);
+    auto pswEnlarged = getCryptoSequence(decPass);
     auto repeatIndex = 0;
     for (auto &c : fileContents) {
         if (repeatIndex == pswEnlarged.size()) repeatIndex = 0;
@@ -87,8 +89,12 @@ auto CryptographyManager::decrypt(const std::filesystem::path &path, const std::
         repeatIndex++;
     }
 
-    auto catVec = PasswordMapper::mapTextToCategoryVec(fileContents);
-    auto formattedContents = PasswordMapper::mapCategoryVecToText(catVec);
-    fileManager.setFileContents(formattedContents, path);
+    try {
+        auto catVec = PasswordMapper::mapTextToCategoryVec(fileContents);
+        auto formattedContents = PasswordMapper::mapCategoryVecToText(catVec);
+        fileManager.setFileContents(formattedContents, path);
+    } catch (const std::runtime_error &e) {
+        fileManager.setFileContents(fileContents, path);
+    }
     return lastTimeModMsg;
 }

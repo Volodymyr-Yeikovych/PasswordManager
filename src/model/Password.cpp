@@ -14,9 +14,9 @@
 //    return equalName && equalPassword && equalWebsite && equalLogin;
 //}
 
-Password::Password(const std::string &name, const std::string &passText) : name(name), password(passText) {
+Password::Password(const std::string &name, const std::string &password) : name(name), password(password) {
     this->name = name;
-    this->password = passText;
+    this->password = password;
 }
 
 

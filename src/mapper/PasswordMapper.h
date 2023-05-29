@@ -10,6 +10,12 @@
 #include "../model/Password.h"
 #include "../model/Category.h"
 
+/**
+ * @since 1.0
+ * @author Volodymyr Yeikovych
+ * @see <p><a href="https://github.com/Volodymyr-Yeikovych/PasswordManager">This project on my github</a></p>
+ */
+
 class PasswordMapper {
     inline static std::vector<std::string> randomPool = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b",
                                                          "c", "d", "e",
@@ -62,14 +68,13 @@ public:
 
     auto static trim(std::string &str) -> void;
 
+    auto static isNumerical(const std::string &str) -> bool;
 private:
     auto static generatePassword(const std::string &params) -> std::string;
 
     auto static createPassword(int size, bool isUpper, bool isSpecial) -> std::string;
 
     auto static getEditCommandPipeIndex(const std::vector<std::string> &commandParams) -> int;
-
-    auto static isNumerical(const std::string &str) -> bool;
 };
 
 

@@ -27,7 +27,7 @@ auto ConsoleView::println() -> void {
 
 auto ConsoleView::displayFiles(const std::vector<std::filesystem::path> &files) -> void {
     auto counter = 1;
-    for (auto &f: files) {
+    for (const auto &f: files) {
         print(f.string());
         print("  <--  ");
         print(std::to_string(counter++));
@@ -38,12 +38,22 @@ auto ConsoleView::displayFiles(const std::vector<std::filesystem::path> &files) 
 auto ConsoleView::readNum() -> int {
     auto num = int();
     std::cin >> num;
+    if (std::cin.fail()) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        fflush(stdin);
+    }
     return num;
 }
 
 auto ConsoleView::readString() -> std::string {
     auto output = std::string();
     std::getline(std::cin >> std::ws, output);
+    if (std::cin.fail()) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        fflush(stdin);
+    }
     return output;
 }
 

@@ -34,6 +34,7 @@ auto ProgramController::start() -> void {
     consoleManager.println("Type from 1 to n where n is the number of a last file.");
     consoleManager.println("If number out of bounds is printed, absolute path should be provided.");
     consoleManager.displayFiles(pathVector);
+
     consoleManager.print("Enter here: ");
     auto input = consoleManager.readNum();
     if (inputOutOfBounds(input, pathVector.size())) {
@@ -41,12 +42,16 @@ auto ProgramController::start() -> void {
         filePath = std::filesystem::path(consoleManager.readString());
     } else filePath = pathVector.at(input - 1);
     consoleManager.println(filePath.string());
+
     consoleManager.print("Provide your password: ");
     auto userPassword = consoleManager.readString();
+
     auto lastTimeModMsg = cryptographyManager.decrypt(filePath, userPassword);
     consoleManager.println(lastTimeModMsg);
+
     auto decryptedFile = fileManager.getFileLines(filePath);
     consoleManager.println("Write help to list available commands.");
+
     auto command = std::string();
     while (!isExitCommand(command)) {
         consoleManager.print("Enter your command: ");
@@ -57,6 +62,7 @@ auto ProgramController::start() -> void {
             continue;
         } else executeCommand(command);
     }
+
     cryptographyManager.encrypt(filePath, userPassword);
 }
 
@@ -645,7 +651,7 @@ auto ProgramController::passwordSafetyInform(const std::string &psw, const std::
 auto ProgramController::executeCommand(const std::string &command) -> void {
     if (isExitCommand(command)) return;
     try {
-        if (isHelpCommand(command)) listCommands();
+        if (isHelpCommand(command)) executeHelp();
         if (isSearchCommand(command)) executeSearch(command);
         if (isSortCommand(command)) executeSort(command);
         if (isAddCommand(command)) executeAdd(command);
@@ -809,7 +815,7 @@ auto ProgramController::executeDeleteCategory(const std::string &command) -> voi
     fileManager.setFileContents(newFileContent, filePath);
 }
 
-auto ProgramController::listCommands() -> void {
+auto ProgramController::executeHelp() -> void {
     consoleManager.println("================================================");
     consoleManager.println("------------------------------------------------");
     consoleManager.println("exit");
