@@ -12,6 +12,13 @@
 #include <map>
 #include "../model/Category.h"
 
+/**
+ *
+ * @author Volodymyr Yeikovych
+ * @see <p><a href="https://github.com/Volodymyr-Yeikovych/PasswordManager">This project on my github</a></p>
+ * @since 1.0
+ */
+
 class ConsoleView {
 
 public:

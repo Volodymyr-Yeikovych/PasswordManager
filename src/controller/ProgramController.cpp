@@ -43,7 +43,8 @@ auto ProgramController::start() -> void {
     consoleManager.println(filePath.string());
     consoleManager.print("Provide your password: ");
     auto userPassword = consoleManager.readString();
-    cryptographyManager.decrypt(filePath, userPassword);
+    auto lastTimeModMsg = cryptographyManager.decrypt(filePath, userPassword);
+    consoleManager.println(lastTimeModMsg);
     auto decryptedFile = fileManager.getFileLines(filePath);
     consoleManager.println("Write help to list available commands.");
     auto command = std::string();
@@ -396,13 +397,6 @@ auto ProgramController::isHelpCommand(const std::string &command) -> bool {
     return command == "help";
 }
 
-auto ProgramController::eraseNotMatching(const Category &searchCat,
-                                         std::map<Category, std::vector<Password>> &matchingPsw) -> void {
-    for (const auto &entry: matchingPsw) {
-        if (entry.first != searchCat) matchingPsw.erase(entry.first);
-    }
-}
-
 auto ProgramController::editData(const Category &catToMatch, const Category &catToEdit,
                                  const Password &pswToMatch, const Password &pswToEdit,
                                  std::vector<Category> &saveData) -> void {
@@ -520,9 +514,21 @@ auto ProgramController::deleteMatching(const Password &pswToMatch, const Categor
         }
         counter++;
     }
+    auto delSize = 0;
+    for (const auto& pair : toDelete) {
+        delSize += (int) pair.second.size();
+    }
 
-    for (const auto &pair: toDelete) {
-        for (auto &toErase: pair.second) fileData[pair.first].removePassword(toErase);
+    auto confirmation = std::string("yes");
+    if (delSize > 1) {
+        consoleManager.print("You are trying to delete more than one password. Are you sure (yes/no): ");
+        confirmation = consoleManager.readString();
+    }
+
+    if (confirmation == "yes") {
+        for (const auto &pair: toDelete) {
+            for (auto &toErase: pair.second) fileData[pair.first].removePassword(toErase);
+        }
     }
 }
 
@@ -541,7 +547,8 @@ auto ProgramController::isSortSubParam(const std::string &subParam) -> bool {
 }
 
 auto
-ProgramController::getSortVecFromSortCommand(const std::vector<std::string> &commandParams) -> std::vector<std::string> {
+ProgramController::getSortVecFromSortCommand(
+        const std::vector<std::string> &commandParams) -> std::vector<std::string> {
     auto sortVec = std::vector<std::string>();
     for (int i = 1; i < commandParams.size(); i++) {
         auto nextIsEmpty = (i + 1) == commandParams.size();
@@ -620,6 +627,21 @@ auto ProgramController::sortData(const std::vector<std::string> &sortVec, std::v
 
 }
 
+auto ProgramController::passwordSafetyInform(const std::string &psw, const std::vector<Category> &fileData) -> void {
+    auto presentBefore = false;
+    for (const auto &cat: fileData) {
+        for (const auto &pass: cat.getPasswordVec()) {
+            if (pass.getPassword() == psw) presentBefore = true;
+        }
+    }
+    if (presentBefore)
+        consoleManager.println("This password was already present in the file. Consider choosing a new one.");
+    if (psw.size() <= 8 || presentBefore) consoleManager.println("Your password safety is mediocre.");
+    else if (psw.size() >= 12 && psw.size() < 16 && !presentBefore)
+        consoleManager.println("Your password safety is plausible.");
+    else if (psw.size() >= 16 && !presentBefore) consoleManager.println("Your password safety is superb.");
+}
+
 auto ProgramController::executeCommand(const std::string &command) -> void {
     if (isExitCommand(command)) return;
     try {
@@ -647,12 +669,19 @@ auto ProgramController::executeSearch(const std::string &command) -> void {
     auto entryMap = std::map<Category, std::vector<Password>>();
     for (auto existingCats: categoriesVec) {
         auto matches = existingCats.getMatchingVec(searchPsw);
-        if (!matches.empty()) entryMap[existingCats] = matches;
+        if (!matches.empty()) {
+            if (specificCat.getName().empty()) {
+                entryMap[existingCats] = matches;
+            } else {
+                if (existingCats.getName() == specificCat.getName())
+                    entryMap[existingCats] = matches;
+            }
+        }
     }
 
-    if (!specificCat.getName().empty()) {
-        eraseNotMatching(specificCat, entryMap);
-    }
+//    if (!specificCat.getName().empty()) {
+//        eraseNotMatching(specificCat, entryMap);
+//    }
 
     consoleManager.printCategoryMap(entryMap);
 }
@@ -697,6 +726,7 @@ auto ProgramController::executeAdd(const std::string &command) -> void {
         throw std::invalid_argument(
                 "Trying to add password in non-existent category. Try command -> addcat " + entryCat.getName());
 
+    passwordSafetyInform(passwordToAdd.getPassword(), categoriesVec);
     categoriesVec[catInd].addPassword(passwordToAdd);
     auto newFileContent = PasswordMapper::mapCategoryVecToText(categoriesVec);
     fileManager.setFileContents(newFileContent, filePath);

@@ -6,6 +6,7 @@
 #include <filesystem>
 #include <vector>
 #include "../file/FileManager.h"
+#include "../view/ConsoleView.h"
 
 #ifndef PJC_PROJECT_PASSWORDMANAGER_CRYPTOGRAPHYMANAGER_H
 #define PJC_PROJECT_PASSWORDMANAGER_CRYPTOGRAPHYMANAGER_H
@@ -29,10 +30,12 @@ public:
 
     auto encrypt(const std::filesystem::path &path, const std::string &encPass) -> void;
 
-    auto decrypt(const std::filesystem::path &path, const std::string &decPass) -> void;
+    auto decrypt(const std::filesystem::path &path, const std::string &decPass) -> std::string;
 
 private:
     auto getEnlargedPsw(const std::string &encPsw) -> std::string;
+    auto appendTime(std::string &contents) -> void;
+    auto getLastTimeModifiedMsg(std::string &contents) -> std::string;
 
 };
 

@@ -94,6 +94,7 @@ auto PasswordMapper::getPasswordFromAddCommand(const std::vector<std::string> &c
     return password;
 }
 
+
 auto PasswordMapper::getEditCommandPipeIndex(const std::vector<std::string> &commandParams) -> int {
     auto delimIndex = int();
     auto delim = "|";

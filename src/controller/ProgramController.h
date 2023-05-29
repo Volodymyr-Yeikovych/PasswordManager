@@ -104,8 +104,6 @@ private:
 
     auto isInvalidSEDParamType(const std::string &paramType) -> bool;
 
-    auto eraseNotMatching(const Category &searchCat, std::map<Category, std::vector<Password>> &matchingPsw) -> void;
-
     auto editData(const Category &catToMatch, const Category &catToEdit, const Password &pswToMatch,
                   const Password &pswToEdit, std::vector<Category> &saveData) -> void;
 
@@ -126,6 +124,8 @@ private:
     auto isSortSubParam(const std::string &subParam) -> bool;
 
     auto isValidSortVec(const std::vector<std::string> &sortVec) -> bool;
+
+    auto passwordSafetyInform(const std::string &psw, const std::vector<Category> &fileData) -> void;
 };
 
 

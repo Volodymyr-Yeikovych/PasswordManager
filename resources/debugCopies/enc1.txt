@@ -15,4 +15,5 @@ Studying {
 Vasa {
 	vasaName:pswvasa:vasssa.com:vasyl;
 	vv:i8Z5G8LIbKwaZbMPqoeRHDI::;
+	psw:hawk21::;
 }
