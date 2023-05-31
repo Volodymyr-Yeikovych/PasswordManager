@@ -194,11 +194,16 @@ auto PasswordMapper::parseCommandAndGeneratePassword(const std::string &params) 
 auto PasswordMapper::createPassword(int size, bool isUpper, bool isSpecial) -> std::string {
     std::random_device dev;
     std::mt19937 mt(dev());
-    auto upperInc = isUpper ? 26 : 0;
-    auto specialInc = isSpecial ? 24 : 0;
-    std::uniform_int_distribution<int> distribution(0, 35 + upperInc + specialInc);
+    auto upperInc = 26;
+    auto specialInc = 24;
+    std::uniform_int_distribution<int> random(0, 35 + upperInc + specialInc);
     auto password = std::string();
-    for (int i = 0; i < size; i++) password.append(charPool[distribution(mt)]);
+    for (int i = 0; i < size; i++) {
+        auto rand = random(mt);
+        if (rand > 35 && rand <= (35 + upperInc) && !isUpper) rand -= 30;
+        if (rand > 35 + upperInc && !isSpecial) rand -= 40;
+        password.append(charPool[rand]);
+    }
     return password;
 }
 
