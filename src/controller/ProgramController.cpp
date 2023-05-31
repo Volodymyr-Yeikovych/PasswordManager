@@ -215,7 +215,6 @@ auto ProgramController::getStringVecFromAddCommands(const std::string &command) 
     paramsVec.emplace_back(leftSplit[0]);
     paramsVec.emplace_back(leftSplit[1].substr(1));
     paramsVec.emplace_back(rightSplit);
-//    fmt::print("{} add\n", paramsVec); /// debug line <------------------------
     return paramsVec;
 }
 
@@ -234,13 +233,11 @@ auto ProgramController::getStringVecFromSearchDeleteCommands(const std::string &
         paramsVec.emplace_back(quoteVec[0]);
         paramsVec.emplace_back(quoteVec[1]);
     }
-//    fmt::print("{} \n", paramsVec); /// debug line <------------------------
     return paramsVec;
 }
 
 auto ProgramController::getStringVecFromAddDelCatCommands(const std::string &command) -> std::vector<std::string> {
     auto paramsVec = PasswordMapper::strSplitTrim(command, "\\s");
-//    fmt::print("{} \n", paramsVec); /// debug line <------------------------
     return paramsVec;
 }
 
@@ -255,7 +252,6 @@ auto ProgramController::getStringVecFromSortCommand(const std::string &command) 
         }
         i++;
     }
-//    fmt::print("{} sort\n", paramsVec); /// debug line <------------------------
     return paramsVec;
 }
 
@@ -277,7 +273,6 @@ auto ProgramController::getStringVecFromEditCommand(const std::string &command) 
         paramsVec.emplace_back(el);
         i++;
     }
-//    fmt::print("{} edit\n", paramsVec); /// debug line <------------------------
     return paramsVec;
 }
 
@@ -684,10 +679,6 @@ auto ProgramController::executeSearch(const std::string &command) -> void {
             }
         }
     }
-
-//    if (!specificCat.getName().empty()) {
-//        eraseNotMatching(specificCat, entryMap);
-//    }
 
     consoleManager.printCategoryMap(entryMap);
 }

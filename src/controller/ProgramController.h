@@ -204,6 +204,7 @@ private:
     /**
      * Executes add command
      * @param command - command to execute
+     * @throws throw std::invalid_argument - if trying to add password to non-existent category
      */
     auto executeAdd(const std::string &command) -> void;
 
@@ -407,6 +408,8 @@ private:
      * @param pswToMatch - password to modify
      * @param pswToEdit - password to change data to
      * @param saveData - category vector to modify
+     *
+     * @throws throw std::runtime_error - if category to modify or category to transfer data to don't exist.
      */
     auto editData(const Category &catToMatch, const Category &catToEdit, const Password &pswToMatch,
                   const Password &pswToEdit, std::vector<Category> &saveData) -> void;

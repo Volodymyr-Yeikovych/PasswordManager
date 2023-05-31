@@ -87,7 +87,7 @@ auto PasswordMapper::getPasswordFromAddCommand(const std::vector<std::string> &c
     auto login = std::string();
     if (paramsVec.size() > 3) website = paramsVec[3];
     if (paramsVec.size() > 4) login = paramsVec[4];
-    if (isGeneratedPassword) strPass = generatePassword(strPass);
+    if (isGeneratedPassword) strPass = parseCommandAndGeneratePassword(strPass);
     auto password = Password(name, strPass);
     password.setWebsite(website);
     password.setLogin(login);
@@ -170,7 +170,7 @@ auto PasswordMapper::mapPasswordToString(const Password &password) -> std::strin
                        password.getLogin() + ";");
 }
 
-auto PasswordMapper::generatePassword(const std::string &params) -> std::string {
+auto PasswordMapper::parseCommandAndGeneratePassword(const std::string &params) -> std::string {
     auto paramsVec = strSplitTrim(params, "-");
     auto size = int();
     auto isUpper = bool();
@@ -198,7 +198,7 @@ auto PasswordMapper::createPassword(int size, bool isUpper, bool isSpecial) -> s
     auto specialInc = isSpecial ? 24 : 0;
     std::uniform_int_distribution<int> distribution(0, 35 + upperInc + specialInc);
     auto password = std::string();
-    for (int i = 0; i < size; i++) password.append(randomPool[distribution(mt)]);
+    for (int i = 0; i < size; i++) password.append(charPool[distribution(mt)]);
     return password;
 }
 
