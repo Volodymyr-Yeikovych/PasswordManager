@@ -347,43 +347,165 @@ private:
     auto isInvalidSortCommandTypes(const std::vector<std::string> &params) -> bool;
 
     /**
-     * Checks if specified string is invalid sort command syntax
+     * Checks if specified string has invalid sort command syntax
      *
      * @param param - string to check
-     * @returns true - if specified string is invalid sort command syntax
+     * @returns true - if specified string has invalid sort command syntax
      * @returns false - otherwise
      */
     auto isInvalidSortParam(const std::string &param) -> bool;
 
+    /**
+     * Checks if specified string has invalid sort command syntax
+     *
+     * @param param - string to check
+     * @returns true - if specified string has invalid sort command syntax
+     * @returns false - otherwise
+     */
     auto isInvalidSortOrder(const std::string &param) -> bool;
 
+    /**
+     * Parses specified string into vector of strings corresponding to edit command format
+     *
+     * @param command - string to parse
+     * @returns vector of string corresponding to edit command format
+     * @returns empty vector if format of specified string is invalid
+     */
     auto getStringVecFromEditCommand(const std::string &command) -> std::vector<std::string>;
 
+    /**
+     * Checks if specified string has invalid edit command syntax
+     *
+     * @param param - string to check
+     * @returns true - if specified string has invalid edit command syntax
+     * @returns false - otherwise
+     */
     auto isInvalidEditCommandTypes(const std::vector<std::string> &params) -> bool;
 
+    /**
+     * Checks if specified string has invalid search/edit/delete command syntax
+     *
+     * @param param - string to check
+     * @returns true - if specified string has invalid search/edit/delete command syntax
+     * @returns false - otherwise
+     */
     auto isInvalidSEDParamType(const std::string &paramType) -> bool;
 
+    /**
+     * @brief Edits data of specified vector of categories
+     *
+     * @long If category to modify and category to transfer data is empty
+     * changes all passwords from vector of categories that matches password to modify into password to change data to.
+     * If category to modify is not empty then it changes only passwords matching in this particular category.
+     * If category to modify and category to transfer are present,
+     * transfers matching data to from category to modify into category to transfer data.
+     * If category to modify is empty and category to transfer data to is present,
+     * transfers all matching passwords from all categories to category to transfer data.
+     *
+     * @param catToMatch - category to modify
+     * @param catToEdit - category to transfer data to
+     * @param pswToMatch - password to modify
+     * @param pswToEdit - password to change data to
+     * @param saveData - category vector to modify
+     */
     auto editData(const Category &catToMatch, const Category &catToEdit, const Password &pswToMatch,
                   const Password &pswToEdit, std::vector<Category> &saveData) -> void;
 
+    /**
+     * @brief Checks if category vector contains particular category.
+     *
+     * @long Checks if category vector given as a second argument
+     * has a category with name equal to the first argument.
+     *
+     * @param catToAdd - category to check for presence
+     * @param fileData - category vector to check
+     *
+     * @returns true - if category vector contains category with name equal to first argument name
+     * @returns false - false if otherwise
+     */
     auto catExists(const Category &catToAdd, const std::vector<Category> &fileData) -> bool;
 
+    /**
+     * @brief Returns iterator to a category to given category vector
+     *
+     * @param catToAdd - category to find
+     * @param fileData - vector to check for category presence
+     *
+     * @returns iterator to the given category if category vector
+     * contains category with name equal to specified category name
+     *
+     * @returns iterator.end() if otherwise
+     */
     auto getNameMatchingCatIterator(const Category &catToAdd,
                                     const std::vector<Category> &fileData) -> std::vector<Category>::const_iterator;
 
+    /**
+     * @brief Deletes matching password or category from specified category vector
+     *
+     * @long If category to erase is empty deletes all passwords
+     * from all categories that matches password to delete.
+     * If category to erase is not empty deletes only passwords that are matching in this particular category.
+     * If password to match matches all records in the category to erase,
+     * method will erase all passwords, but never specified category.
+     *
+     * @param pswToMatch - password to delete
+     * @param catToMatch - category to erase data from
+     * @param fileData - category vector to modify
+     */
     auto
     deleteMatching(const Password &pswToMatch, const Category &catToMatch, std::vector<Category> &fileData) -> void;
 
+    /**
+     * Sorts data from specified category vector according to the first argument parameters.
+     *
+     * @param sortVec - sort parameters
+     * @param fileData - category vector to sort
+     */
     auto sortData(const std::vector<std::string> &sortVec, std::vector<Category> &fileData) -> void;
 
+    /**
+     * Parses specified string into vector of strings corresponding to sort command format
+     *
+     * @param command - string to parse
+     * @returns vector of string corresponding to sort command format
+     * @returns empty vector if format of specified string is invalid
+     */
     auto getSortVecFromSortCommand(const std::vector<std::string> &commandParams) -> std::vector<std::string>;
 
+    /**
+     * Checks if specified parameter is a valid parameter of sort command
+     *
+     * @param param - parameter to check
+     * @returns true - if specified parameter is a valid parameter of sort command
+     * @returns false - otherwise
+     */
     auto isSortParam(const std::string &param) -> bool;
 
+    /**
+     * Checks if specified parameter is a valid parameter of sort command
+     *
+     * @param param - parameter to check
+     * @returns true - if specified parameter is a valid parameter of sort command
+     * @returns false - otherwise
+     */
     auto isSortSubParam(const std::string &subParam) -> bool;
 
+    /**
+     * Checks if specified string vector has valid sort command syntax
+     *
+     * @param sortVec - vector to check
+     * @returns true - if specified string vector has valid sort command syntax
+     * @returns false - otherwise
+     */
     auto isValidSortVec(const std::vector<std::string> &sortVec) -> bool;
 
+    /**
+     * Prints password safety inform message for the specified password,
+     * and if specified category vector already contains given password.
+     *
+     * @param psw - password
+     * @param fileData - category vector to check for password
+     */
     auto passwordSafetyInform(const std::string &psw, const std::vector<Category> &fileData) -> void;
 };
 
