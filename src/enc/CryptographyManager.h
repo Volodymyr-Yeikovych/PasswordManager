@@ -62,8 +62,27 @@ public:
     auto decrypt(const std::filesystem::path &path, const std::string &decPass) -> std::string;
 
 private:
+    /**
+     * @brief Returns encrypted string from given password to further encrypt data
+     *
+     * @long Encrypts specified password using internal 128 char vector to make file encryption more safe
+     *
+     * @param encPsw - password to encrypt
+     * @return encrypted string from given char sequence
+     */
     auto getCryptoSequence(const std::string &encPsw) -> std::string;
-    auto appendTime(std::string &contents) -> void;
+
+    /**
+     * Adds current time to the specified string
+     * @param contents - string to modify
+     */
+    auto addTime(std::string &contents) -> void;
+
+    /**
+     * Parses specified string to get time written inside and deletes time from the string
+     * @param contents - string to modify
+     * @return
+     */
     auto getLastTimeModifiedMsg(std::string &contents) -> std::string;
 
 };

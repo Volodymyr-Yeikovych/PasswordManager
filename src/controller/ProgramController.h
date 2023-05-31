@@ -70,6 +70,7 @@ public:
      */
     explicit ProgramController(const FileManager &fileManager, const ConsoleView &consoleManager,
                                const CryptographyManager &cryptographyManager, const PasswordMapper &mapper);
+
     /**
      * Starts execution of a program
      */
@@ -247,26 +248,111 @@ private:
      */
     auto isEmptyCommand(const std::vector<std::string> &params) -> bool;
 
+    /**
+     * Checks whether specified vector not matches search/add/delete commands syntax
+     *
+     * @param params - vector to check
+     *
+     * @returns true - if not matches search/add/delete commands syntax
+     * @returns false - otherwise
+     */
     auto isInvalidSADCommandSyntax(const std::vector<std::string> &params) -> bool;
 
+    /**
+     * Checks whether specified vector is not a command given by second argument
+     *
+     * @param params - vector to check
+     * @param commandKeyword - command name
+     *
+     * @returns true - if vector[0] != second argument
+     * @returns false - otherwise
+     */
     auto isInvalidCommandKeyword(const std::vector<std::string> &params, const std::string &commandKeyword) -> bool;
 
-    auto isInvalidSEDCommandTypes(const std::vector<std::string> &params) -> bool;
+    /**
+     * Checks whether specified vector is invalid search/delete command syntax
+     * @param params - vector to check
+     * @returns true - if invalid search/delete command syntax
+     * @returns false - otherwise
+     */
+    auto isInvalidSDCommandTypes(const std::vector<std::string> &params) -> bool;
 
+    /**
+     * Checks whether specified vector is invalid add command syntax
+     *
+     * @param params - vector to check
+     *
+     * @returns true - if is invalid add command syntax
+     * @returns false - otherwise
+     */
     auto isInvalidAddCommandTypes(const std::vector<std::string> &params) -> bool;
 
+    /**
+     * Checks if specified vector doesn't have length of an add command
+     *
+     * @param params - vector to check
+     *
+     * @returns true - if has incorrect length
+     * @returns false - otherwise
+     */
     auto isInvalidAddCommandLength(const std::vector<std::string> &params) -> bool;
 
+    /**
+     * Parses specified string into vector of strings corresponding to add/delete categories format
+     *
+     * @param command - string to parse
+     *
+     * @returns vector of strings corresponding to add/delete categories format
+     * @returns empty vector if format of specified string is invalid
+     */
     auto getStringVecFromAddDelCatCommands(const std::string &command) -> std::vector<std::string>;
 
+    /**
+     * Parses specified string into vector of strings corresponding to add command format
+     *
+     * @param command - string to parse
+     *
+     * @returns vector of string corresponding to add command format
+     * @returns empty vector if format of specified string is invalid
+     */
     auto getStringVecFromAddCommands(const std::string &command) -> std::vector<std::string>;
 
+    /**
+     * Checks if specified string vector has invalid length for add/delete category command format
+     *
+     * @param params - string vector to check
+     *
+     * @returns true - if length of add/delete category command vector is invalid
+     * @returns false - otherwise
+     */
     auto isInvalidAddDelCatCommandLength(const std::vector<std::string> &params) -> bool;
 
+    /**
+     * Parses specified string into vector of strings corresponding to sort command format
+     *
+     * @param command - string to parse
+     * @returns vector of string corresponding to sort command format
+     * @returns empty vector if format of specified string is invalid
+     */
     auto getStringVecFromSortCommand(const std::string &command) -> std::vector<std::string>;
 
+    /**
+     * Checks if specified string vector has invalid command syntax
+     *
+     * @param params - string vector to check
+     *
+     * @returns true - if specified string vector has invalid command syntax
+     * @returns false - otherwise
+     */
     auto isInvalidSortCommandTypes(const std::vector<std::string> &params) -> bool;
 
+    /**
+     * Checks if specified string is invalid sort command syntax
+     *
+     * @param param - string to check
+     * @returns true - if specified string is invalid sort command syntax
+     * @returns false - otherwise
+     */
     auto isInvalidSortParam(const std::string &param) -> bool;
 
     auto isInvalidSortOrder(const std::string &param) -> bool;

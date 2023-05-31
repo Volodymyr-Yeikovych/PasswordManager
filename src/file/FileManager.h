@@ -79,9 +79,6 @@ public:
      */
     auto setFileContents(const std::string &fileContent, const std::filesystem::path &filePath) -> bool;
 
-    auto getU32FileContents(const std::filesystem::path &filePath) -> std::u32string;
-
-    auto setU32FileContents(const std::u32string &fileContent, const std::filesystem::path &filePath) -> bool;
 };
 
 

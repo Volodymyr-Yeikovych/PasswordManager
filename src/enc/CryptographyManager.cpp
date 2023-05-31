@@ -25,7 +25,7 @@ auto CryptographyManager::getCryptoSequence(const std::string &encPsw) -> std::s
     return cryptoSeq;
 }
 
-auto CryptographyManager::appendTime(std::string &contents) -> void {
+auto CryptographyManager::addTime(std::string &contents) -> void {
     auto curTime = std::chrono::system_clock::now();
     auto time = std::chrono::system_clock::to_time_t(curTime);
     auto locTime = std::localtime(&time);
@@ -63,7 +63,7 @@ auto CryptographyManager::getLastTimeModifiedMsg(std::string &contents) -> std::
 
 auto CryptographyManager::encrypt(const std::filesystem::path &path, const std::string &encPass) -> void {
     auto fileContents = fileManager.getFileContents(path);
-    appendTime(fileContents);
+    addTime(fileContents);
     auto pswEnlarged = getCryptoSequence(encPass);
     auto repeatIndex = 0;
     auto i = 0;

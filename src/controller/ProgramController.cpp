@@ -133,7 +133,7 @@ auto ProgramController::isInvalidSEDParamType(const std::string &paramType) -> b
     return false;
 }
 
-auto ProgramController::isInvalidSEDCommandTypes(const std::vector<std::string> &params) -> bool {
+auto ProgramController::isInvalidSDCommandTypes(const std::vector<std::string> &params) -> bool {
     for (int i = 1; i < params.size(); i += 2) {
         if (isInvalidSEDParamType(params[i])) return true;
     }
@@ -326,7 +326,7 @@ auto ProgramController::isSearchCommand(const std::string &command) -> bool {
     if (isEmptyCommand(paramsVec)) return false;
     if (isInvalidSADCommandSyntax(paramsVec)) return false;
     if (isInvalidCommandKeyword(paramsVec, "search")) return false;
-    if (isInvalidSEDCommandTypes(paramsVec)) return false;
+    if (isInvalidSDCommandTypes(paramsVec)) return false;
     return true;
 }
 
@@ -373,7 +373,7 @@ auto ProgramController::isDeletePasswordCommand(const std::string &command) -> b
     if (isEmptyCommand(paramsVec)) return false;
     if (isInvalidSADCommandSyntax(paramsVec)) return false;
     if (isInvalidCommandKeyword(paramsVec, "delete")) return false;
-    if (isInvalidSEDCommandTypes(paramsVec)) return false;
+    if (isInvalidSDCommandTypes(paramsVec)) return false;
     return true;
 }
 
